@@ -100,6 +100,45 @@
 
 <div class="section_div">
     <div class="section_div_left">
+        <h1>Economy</h1>
+        <div class="economy_btn">
+            <button onclick="show_economy('rrp', this)" class="selected">Reverse Repo</button>
+            <button onclick="show_economy('treasury', this)">Daily Treasury</button>
+            <button onclick="show_economy('inflation', this)">Inflation</button>
+            <button onclick="show_economy('retail', this)">Retail Sales</button>
+        </div>
+
+        <div class="section_div_description" id="economy_description">
+            <div class="section_div_text">
+                View record high reverse-repo transaction.
+            </div>
+            <div class="href_btn"><a href="/reverse_repo/">VIEW MORE</a></div>
+        </div>
+    </div>
+    <div class="section_div_right"><img src="{% static 'images/homepage/economy.png' %}"></div>
+</div>
+
+
+<div class="section_div">
+    <div class="section_div_left">
+        <h1>Stocks Beta</h1>
+        <div class="beta_btn">
+            <button onclick="show_beta('true_beta', this)" class="selected">True Beta</button>
+            <button onclick="show_beta('covid_beta', this)">Covid Beta</button>
+        </div>
+
+        <div class="section_div_description" id="beta_description">
+            <div class="section_div_text">
+                Insert here.
+            </div>
+            <div class="href_btn"><a href="/reverse_repo/">VIEW MORE</a></div>
+        </div>
+    </div>
+    <div class="section_div_right"><img src="{% static 'images/homepage/beta.png' %}"></div>
+</div>
+
+<div class="section_div">
+    <div class="section_div_left">
         <h1>Discover</h1>
         <div class="discover_btn">
             <button onclick="show_discover('overview', this)" class="selected">Market Overview</button>
@@ -107,7 +146,6 @@
             <button onclick="show_discover('low_float', this)">Low Float</button>
             <button onclick="show_discover('hedge', this)">Hedge Funds</button>
             <button onclick="show_discover('ark', this)">ARK Trades</button>
-            <button onclick="show_discover('economy', this)">Economy</button>
             <button onclick="show_discover('amd_xlnx_ratio', this)">AMD-XLNX Ratio</button>
         </div>
 
@@ -134,7 +172,7 @@
         <div class="section_div_description" id="op_description">
             <div class="section_div_text">
                 Stocksera is an open-source application.
-                I spent months creating this application, with no monetary benefits.
+                I spent months creating this application, without monetary benefits.
                 If you like this project, you can support me via <a href="https://www.paypal.me/stocksera" target="_blank">Paypal</a> or <a href="https://www.patreon.com/stocksera" target="_blank">Patreon</a>.
             </div>
             <div class="href_btn"><a href="https://www.paypal.com/paypalme/stocksera" target="_blank">VIEW MORE</a></div>
@@ -209,7 +247,7 @@ function showSlides() {
     }
     slides[slideIndex-1].style.display = "table-cell";
     dots[slideIndex-1].className += " active";
-    setTimeout(showSlides, 3000);
+    setTimeout(showSlides, 4000);
 }
 </script>
 {% endblock %}

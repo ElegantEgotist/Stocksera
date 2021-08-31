@@ -2,7 +2,7 @@ function display_input() {
     var error_msg_class = document.getElementById("error_msg").className;
     if (error_msg_class == "instructions error_true") {
         document.getElementById("error_msg").style.removeProperty("display");
-        document.getElementsByClassName("contents")[0].style.display = "none";
+        document.getElementsByClassName("contents_div")[0].style.display = "none";
     }
 }
 
@@ -104,22 +104,11 @@ function show_choice(elem) {
 function draw_open_interest_and_volume() {
     var tr = document.getElementsByTagName("table")[2].querySelectorAll("tr");
 
-    var tr_length = Math.round(tr.length / 2);
-    if (tr.length > 10) {
-        var diff = Math.round(tr.length * 0.4);
-    }
-    else {
-        var diff = 0;
-    }
-
-    var lower_limit = tr_length - diff;
-    var upper_limit = tr_length + diff;
-
     var calls_oi_list = [], puts_oi_list = []
     var calls_vol_list = [], puts_vol_list = []
     var strike_list = [];
 
-    for (row=lower_limit; row<upper_limit; row++) {
+    for (row=1; row<tr.length; row++) {
         var td = tr[row].querySelectorAll("td");
         calls_vol_list.push(td[3].innerHTML);
         calls_oi_list.push(td[4].innerHTML);

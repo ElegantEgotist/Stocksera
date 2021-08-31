@@ -42,7 +42,9 @@ def buy_new_ticker(date):
     if " " in latest_date:
         latest_date = latest_date.split()[0]
         latest_date = datetime.strptime(latest_date, "%d/%m/%Y")
-    db.execute("SELECT * FROM wallstreetbets where date_updated=? ORDER BY total DESC LIMIT 10", (raw_date,))
+    db.execute("SELECT * FROM wallstreetbets where date_updated=? AND ticker NOT IN "
+               "('SPY', 'QQQ', 'IWM', 'TQQQ', 'ARKK', 'ARKF', 'ARKG', 'ARKX', 'ARKW', 'DIA') "
+               "ORDER BY total DESC LIMIT 10", (raw_date,))
     rows = db.fetchall()
     for y in rows:
         symbol = y[1]

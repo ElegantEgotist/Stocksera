@@ -11,6 +11,10 @@
         background-color: transparent;
     }
 
+    select {
+        padding: 4.7px;
+    }
+
     .main_logo {
         margin: 12px auto;
     }
@@ -62,7 +66,7 @@
 
     .switch {
         margin-left: 32px;
-        top: 287px;
+        top: 292px;
         position: fixed;
         display: inline-block;
         width: 33px;
@@ -94,14 +98,14 @@
     .sun_icon {
         width: 13px;
         position: fixed;
-        top: 288px;
+        top: 293px;
         margin-left: 16px;
     }
 
     .night_icon {
         width: 11px;
         position: fixed;
-        top: 289px;
+        top: 294px;
         margin-left: 68px;
     }
 
@@ -209,6 +213,7 @@
         border-left: 0;
         border-radius: 0 5px 5px 0;
         padding: 4.5px;
+        margin-left: -1px;
         text-transform: uppercase;
     }
 
@@ -235,6 +240,12 @@
 
     .instructions p {
         margin-top: 5px;
+    }
+
+    .contents_div {
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .modal-content {
@@ -278,6 +289,10 @@
     body, button, input, select, textarea {
         font-size: 13px;
         background-color: transparent;
+    }
+
+    select {
+        padding: 6.7px;
     }
 
     .main_logo {
@@ -468,6 +483,7 @@
         border-left: 0;
         border-radius: 0 5px 5px 0;
         padding: 7px;
+        margin-left: -1px;
         text-transform: uppercase;
         min-width: 40px;
     }
@@ -493,6 +509,12 @@
 
     .instructions p {
         margin-top: 5px;
+    }
+
+    .contents_div {
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .modal-content {
@@ -542,6 +564,13 @@ body {
 button:hover, a:hover {
     cursor: pointer;
     transition: 0.5s;
+}
+
+select {
+    border: 1px solid grey;
+    border-radius: 6px;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 input:focus, select:focus, button:focus, textarea:focus {
@@ -603,9 +632,13 @@ a {
     color: wheat;
 }
 
+#img_div img {
+    background-color: white !important;
+}
+
 .dark_mode #img_div img {
-    border: 0.8px solid white;
-    background-color: white;
+    border: 0.8px solid white !important;
+    background-color: white !important;
 }
 
 .dark_mode #nav_bar_div, .dark_mode .instructions, .dark_mode #nav_bar_div_logo, .dark_mode .top_nav_right {
@@ -1026,4 +1059,10 @@ input:focus + .slider {
 #consecutive_text {
     font-weight: bold;
     font-size: larger;
+}
+
+input[type=text] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }

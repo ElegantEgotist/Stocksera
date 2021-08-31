@@ -25,6 +25,8 @@
             If a new ticker enters the Top 10 trending ticker list before the market opens, $10000 worth of shares will be bought.
             Any ticker that falls out of the Top 10 list will be sold. All trades will be conducted the moment market opens.
             <br><br>
+            Starting from 2021-09-01, ETFs such as SPY, QQQ, ARKK <b>will no longer be purchased by Reddit ETF</b>.
+            <br><br>
             <b>Do note that this is not financial advice.</b> All "trades" are conducted solely based on tickers' popularity in r/wallstreetbets.
         </p>
     </div>
@@ -39,8 +41,7 @@
         </div>
     </div>
 
-    <div class="reddit_etf">
-
+    <div class="contents_div">
         <div>
             <p class="table_title">Current Trades (Unrealized PnL: <span>{{unrealized_PnL}}</span>)</p>
             <div class="scrollable_div">
@@ -77,7 +78,10 @@
         <div>
             <p class="table_title">Previous Trades (Realized PnL: <span>{{realized_PnL}}</span>)</p>
             <div class="previous_trades_stats"></div>
-            <input placeholder="Search Ticker: " onkeyup="searchTicker(this)">
+            <div class="search_bar">
+                <input type="text" class="ticker_input" placeholder="Ticker: " onkeyup="searchTicker(this)">
+                <button class="submit_btn" type="button"><img src="{% static 'images/search_icon.svg' %}"></button>
+            </div>
             <div class="scrollable_div">
             <table id="previous_trades">
                     <thead>

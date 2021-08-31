@@ -5,7 +5,7 @@
 {% block title %}StocksEra | Daily Treasury{% endblock %}
 
 {% block additional_script %}
-<link rel="stylesheet" href="{% static 'style/daily_treasury.css' %}">
+<link rel="stylesheet" href="{% static 'style/economy.css' %}">
 <script src="{% static 'javascript/daily_treasury.js' %}"></script>
 {% endblock %}
 
@@ -43,7 +43,7 @@
         <h2>Next Release Date</h2>
     </div>
 
-    <div class="daily_treasury">
+    <div class="contents_div">
         <div class="date_selector">
             <button name="date_range" onclick="btn_selected(this); treasury(1)">1 Month</button>
             <button name="date_range" onclick="btn_selected(this); treasury(6)">6 Months</button>

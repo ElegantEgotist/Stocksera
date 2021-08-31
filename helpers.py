@@ -38,7 +38,7 @@ def get_all_tickers():
     return symbol_list, description
 
 
-def check_market_hours(ticker, ticker_selected):
+def check_market_hours(ticker_selected):
     """
     Cache ticker information into a json file to speed up rendering time
     Criteria for update:
@@ -46,7 +46,6 @@ def check_market_hours(ticker, ticker_selected):
         2. When a new ticker is mentioned
     Parameters
     ----------
-    ticker:
     ticker_selected: str
         ticker symbol (e.g: AAPL)
     """
@@ -69,7 +68,7 @@ def check_market_hours(ticker, ticker_selected):
             json.dump(data, r, indent=4)
             print("Market Open. Scraping data", type(information))
 
-    if "shortName" in information:
+    if "longName" in information and information["regularMarketPrice"] != "N/A":
         # db.execute("SELECT * FROM stocksera_trending WHERE symbol=?", (ticker_selected,))
         # count = db.fetchone()
         # if count is None:
@@ -80,9 +79,9 @@ def check_market_hours(ticker, ticker_selected):
         # db.execute("DELETE from stocksera_trending WHERE symbol=?", (ticker_selected,))
         #
         # db.execute("INSERT INTO stocksera_trending (symbol, name, count) VALUES (?, ?, ?) ",
-        #            (ticker_selected, information["shortName"], count))
+        #            (ticker_selected, information["longName"], count))
         db.execute("INSERT INTO stocksera_trending (symbol, name, count) VALUES (?, ?, 1) ON CONFLICT (symbol) "
-                   "DO UPDATE SET count=count+1", (ticker_selected, information["shortName"]))
+                   "DO UPDATE SET count=count+1", (ticker_selected, information["longName"]))
         # db.execute("UPDATE stocksera_trending SET next_update=?", (next_update_time, ))
         conn.commit()
 

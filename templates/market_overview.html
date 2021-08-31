@@ -7,17 +7,17 @@
 {% block additional_script %}
 <link rel="stylesheet" href="{% static 'style/market_overview.css' %}">
 <script src="{% static 'javascript/market_overview.js' %}"></script>
-<script>
-    function mkt_overview_graphs() {
-        if (localStorage.getItem("mode") == "dark") {
-            var graph_mode = "dark";
-        }
-        else {
-            var graph_mode = "light"
-        }
-        console.log(graph_mode)
-    }
-</script>
+<!--<script>-->
+<!--    function mkt_overview_graphs() {-->
+<!--        if (localStorage.getItem("mode") == "dark") {-->
+<!--            var graph_mode = "dark";-->
+<!--        }-->
+<!--        else {-->
+<!--            var graph_mode = "light"-->
+<!--        }-->
+<!--        console.log(graph_mode)-->
+<!--    }-->
+<!--</script>-->
 {% endblock %}
 
 {% block onload_properties%}restore_dark_mode();{% endblock %}
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <div class="market_overview">
+    <div class="contents_div">
         <div class="selector_div">
             <div class="selector selected" onclick="select_selector(0)">Stocks</div>
             <div class="selector" onclick="select_selector(1)">Indices</div>
@@ -480,6 +480,5 @@
                 </div>
             </div>
         </div>
-        <p>Data from: <a href="https://www.tradingview.com" target="_blank">tradingview.com</a></p>
     </div>
 {% endblock %}

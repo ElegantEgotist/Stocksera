@@ -5,7 +5,7 @@
 {% block title %}StocksEra | Reverse Repo{% endblock %}
 
 {% block additional_script %}
-<link rel="stylesheet" href="{% static 'style/reverse_repo.css' %}">
+<link rel="stylesheet" href="{% static 'style/economy.css' %}">
 <script src="{% static 'javascript/reverse_repo.js' %}"></script>
 {% endblock %}
 
@@ -49,7 +49,7 @@
         <h2>Next Release Date</h2>
     </div>
 
-    <div class="reverse_repo">
+    <div class="contents_div">
         <div class="date_selector">
             <button name="date_range" onclick="btn_selected(this); reverse_repo(1)">1 Month</button>
             <button name="date_range" onclick="btn_selected(this); reverse_repo(6)">6 Months</button>

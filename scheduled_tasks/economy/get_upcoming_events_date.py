@@ -40,8 +40,8 @@ def to_week_day(date):
     date : datetime
         Date to find the next closest weekday
     """
-    if date.isoweekday() in {6, 7}:
-        date += timedelta(days=-date.isoweekday() + 8)
+    if date.weekday() in {5, 6}:
+        date += timedelta(days=-date.weekday() + 7)
     return str(date.date())
 
 
@@ -62,7 +62,7 @@ def get_holidays():
 if __name__ == '__main__':
     db.execute("SELECT record_date from reverse_repo ORDER BY record_date DESC LIMIT 1")
     record_date = db.fetchone()
-    rrp_treasury_date = get_next_rrp_treasury_date(datetime.strptime(record_date[0], "%Y-%M-%d") + timedelta(days=1))
+    rrp_treasury_date = get_next_rrp_treasury_date(datetime.strptime(record_date[0], "%Y-%m-%d") + timedelta(days=1))
     retail_df = get_next_retail_sales_date()
     cpi_df = get_next_cpi_date()
 

@@ -108,6 +108,7 @@ function reverse_repo(duration) {
                     ],
 
                 xAxes: [{
+                    offset: true,
                     ticks: {
                       maxTicksLimit: 10,
                       maxRotation: 45,

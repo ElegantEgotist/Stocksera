@@ -32,28 +32,28 @@
         </div>
     </div>
 
-    <form action="" method="GET" autocomplete="off">
-        <div class="select_div">
-            <select name="subreddit" onchange="this.form.submit()">
-                <option>Selected: {{subreddit_selected}}</option>
-                <option value="wallstreetbets">Wall Street Bets</option>
-                <option value="stocks">Stocks</option>
-                <option value="stockmarket">Stock Market</option>
-                <option value="options">Options</option>
-                <option value="investing">Investing</option>
-                <option value="pennystocks">Pennystocks</option>
-                <option value="cryptocurrency">Cryptocurrency</option>
-            </select>
-            <select name="date_selected" onchange="this.form.submit()">
-                <option>Date: {{date_selected}}</option>
-                {% for date in all_dates %}
-                    <option value="{{date}}">{{date}}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </form>
+    <div class="contents_div">
+        <form action="" method="GET" autocomplete="off">
+            <div class="select_div">
+                <select name="subreddit" onchange="this.form.submit()">
+                    <option>Selected: {{subreddit_selected}}</option>
+                    <option value="wallstreetbets">Wall Street Bets</option>
+                    <option value="stocks">Stocks</option>
+                    <option value="stockmarket">Stock Market</option>
+                    <option value="options">Options</option>
+                    <option value="investing">Investing</option>
+                    <option value="pennystocks">Pennystocks</option>
+                    <option value="cryptocurrency">Cryptocurrency</option>
+                </select>
+                <select name="date_selected" onchange="this.form.submit()">
+                    <option>Date: {{date_selected}}</option>
+                    {% for date in all_dates %}
+                        <option value="{{date}}">{{date}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
 
-    <div class="table_data">
         <div class="subreddit_intro"></div>
 
         <div id="filter_section">

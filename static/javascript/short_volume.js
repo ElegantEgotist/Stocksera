@@ -1,17 +1,12 @@
-function display_data() {
-    var error_msg_class = document.getElementById("error_msg").className;
-    if (error_msg_class == "instructions error_true") {
-        document.getElementById("error_msg").style.removeProperty("display");
-        document.getElementById("short_vol_data").style.display = "none";
-    }
-}
-
 function display_table() {
     var shorted_vol_daily = document.getElementsByTagName("table")[0].querySelectorAll("tr");
     for (tr=shorted_vol_daily.length-1; tr>0; tr--) {
         var total_td = shorted_vol_daily[tr].querySelectorAll("td");
+        total_td[1].innerHTML = Number(total_td[1].innerHTML).toLocaleString()
         total_td[2].innerHTML = Number(total_td[2].innerHTML).toLocaleString()
         total_td[3].innerHTML = Number(total_td[3].innerHTML).toLocaleString()
+        total_td[4].innerHTML = total_td[4].innerHTML + "%"
+        total_td[5].innerHTML = "$" + total_td[5].innerHTML
     }
 }
 
@@ -28,8 +23,8 @@ function short_vol_graph(duration) {
         date_string = total_td[0].innerHTML;
         if (date_string >= date_threshold) {
             date_list.push(date_string);
-            price_list.push(total_td[1].innerHTML.replace("$", ""));
-            short_vol_num = Number(total_td[2].innerHTML.replace(/[^0-9-.]/g, ""))
+            price_list.push(total_td[5].innerHTML.replace("$", ""));
+            short_vol_num = Number(total_td[1].innerHTML.replace(/[^0-9-.]/g, ""))
             long_vol_num = Number(total_td[3].innerHTML.replace(/[^0-9-.]/g, ""))
             short_vol_list.push(short_vol_num);
             long_vol_list.push(long_vol_num - short_vol_num);
@@ -55,7 +50,7 @@ function short_vol_graph(duration) {
                     label: 'Short Percentage',
                     type: 'line',
                     data: percentage_list,
-                    borderColor: 'wheat',
+                    borderColor: 'blue',
                     backgroundColor: 'transparent',
                     yAxisID: 'B',
                 },
@@ -162,7 +157,7 @@ function short_vol_graph(duration) {
                     label: 'Close Price',
                     type: 'line',
                     data: price_list,
-                    borderColor: 'yellow',
+                    borderColor: 'orange',
                     backgroundColor: 'transparent',
                     yAxisID: 'A',
                 },
@@ -170,7 +165,7 @@ function short_vol_graph(duration) {
                     label: 'Short Percentage',
                     type: 'line',
                     data: percentage_list,
-                    borderColor: 'wheat',
+                    borderColor: 'blue',
                     backgroundColor: 'transparent',
                     yAxisID: 'B',
                 }]

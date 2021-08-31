@@ -1,9 +1,4 @@
 @media only screen and (max-width: 900px) {
-    .top_section {
-        width: 90%;
-        margin:auto;
-    }
-
     .chart-container {
         position: relative;
         height:55vh;
@@ -15,11 +10,6 @@
 }
 
 @media only screen and (min-width: 900px) {
-    .top_section {
-        width: 98%;
-        margin:auto;
-    }
-
     .chart-container {
         position: relative;
         height:55vh;
@@ -30,7 +20,7 @@
     }
 }
 
-.top_section h2 {
+.contents_div h2 {
     margin-top: 30px;
     margin-bottom: 5px;
 }

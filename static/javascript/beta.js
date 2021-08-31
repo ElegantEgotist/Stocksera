@@ -21,7 +21,6 @@ function load_beta_graph(beta_value) {
         hovertemplate:
                 `<b>${ticker_1_name}</b><br>` +
                 "% Change: %{y}%<br>" +
-                "Date: %{x}<br>" +
                 "<extra></extra>",
         type: 'scatter'
     };
@@ -34,7 +33,6 @@ function load_beta_graph(beta_value) {
         hovertemplate:
                 `<b>${ticker_2_name}</b><br>` +
                 "% Change: %{y}%<br>" +
-                "Date: %{x}<br>" +
                 "<extra></extra>",
         type: 'scatter'
     };
@@ -66,7 +64,7 @@ function load_beta_graph(beta_value) {
                 text: '% Price Change',
             },
         },
-        hovermode:'compare',
+        hovermode:'x',
         legend: {
             x: 1,
             xanchor: 'right',
@@ -75,7 +73,7 @@ function load_beta_graph(beta_value) {
     };
 
     var data = [trace1, trace2];
-    Plotly.newPlot('beta_chart', data, layout, {displayModeBar: false, showTips: false, responsive: true});
+    Plotly.newPlot('beta_chart', data, layout, {displayModeBar: false, showTips: true, responsive: true});
 }
 
 function swap_ticker_position() {

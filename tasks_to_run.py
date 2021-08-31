@@ -22,7 +22,7 @@ import scheduled_tasks.economy.get_inflation as get_inflation
 import scheduled_tasks.economy.get_daily_treasury as get_daily_treasury
 
 # Best to run 1 hour before market opens daily to get trending tickers and subreddit count
-SCRAPE_REDDIT_STOCKS = True
+SCRAPE_REDDIT_STOCKS = False
 SCRAPE_REDDIT_CRYPTO = True
 SCRAPE_SUBREDDIT_STATS = True
 

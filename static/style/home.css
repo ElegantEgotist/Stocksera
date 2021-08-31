@@ -391,8 +391,9 @@ h1 {
     color: white;
 }
 
-.dark_mode .section_div_left button:hover {
+.dark_mode .section_div_left button:hover, .dark_mode .selected {
     background-color: #ffba39;
+    color: black;
 }
 
 .section_div_description {

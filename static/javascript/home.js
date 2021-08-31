@@ -79,15 +79,38 @@ function show_discover(type, elem) {
         text = "Get holdings, daily trades and news of ARK Fund."
         url = "/ark_trades/"
     }
-    else if (type == "economy") {
-        text = "View reverse-repo transactions, daily treasury statement & inflation levels over the years."
-        url = "/reverse_repo/"
-    }
     else if (type == "amd_xlnx_ratio") {
-        text = "View current AMD-XLNX Share Price Ratio and percentage upside for XLNX when the merger is complete"
+        text = "View current AMD-XLNX Share Price Ratio and percentage upside for XLNX when the merger is complete."
         url = "/amd_xlnx_ratio/"
     }
     document.getElementById("discover_description").innerHTML = `
+        <div class="section_div_text">${text}</div><div class="href_btn"><a href="${url}">VIEW MORE</a></div>`
+}
+
+function show_economy(type, elem) {
+    var economy_btn = document.getElementsByClassName("economy_btn")[0].querySelectorAll("button")
+    for (i=0; i<economy_btn.length; i++) {
+        economy_btn[i].classList.remove("selected")
+    }
+    elem.classList.add("selected");
+
+    if (type == "rrp") {
+        text = "View record high reverse-repo transaction."
+        url = "/reverse_repo/"
+    }
+    else if (type == "treasury") {
+        text = "Get daily US Treasury’s cash and debt operations for the Federal Government."
+        url = "/daily_treasury/"
+    }
+    else if (type == "inflation") {
+        text = "View heat map of the monthly inflation level."
+        url = "/inflation/"
+    }
+    else if (type == "retail") {
+        text = "Get total sales of the US economy and look at how Covid-19 cases affect spending."
+        url = "/retail_sales/"
+    }
+    document.getElementById("economy_description").innerHTML = `
         <div class="section_div_text">${text}</div><div class="href_btn"><a href="${url}">VIEW MORE</a></div>`
 }
 

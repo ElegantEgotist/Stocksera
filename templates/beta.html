@@ -28,11 +28,11 @@
         </p>
         <form action="" method="GET" autocomplete="off">
             <div class="search_bar">
-                <input class="ticker_input" name="quote" value="{{ticker_selected}}" placeholder="Ticker 1:" autocomplete="off">
+                <input type="text" class="ticker_input" name="quote" value="{{ticker_selected}}" placeholder="Ticker 1:" autocomplete="off">
                 <button class="submit_btn" type="submit"><img src="{% static 'images/search_icon.svg' %}"></button>
             </div>
             <div class="search_bar">
-                <input class="ticker_input" name="quote2" value="{{ticker_selected2}}" placeholder="Ticker 2:" autocomplete="off">
+                <input type="text" class="ticker_input" name="quote2" value="{{ticker_selected2}}" placeholder="Ticker 2:" autocomplete="off">
                 <button class="submit_btn" type="submit"><img src="{% static 'images/search_icon.svg' %}"></button>
             </div>
             <button class="submit_btn" style="border: 1px solid grey;border-radius:5px" type="button" onclick="swap_ticker_position();this.form.submit()">Swap</button>
@@ -53,7 +53,7 @@
         </form>
     </div>
 
-    <div class="beta">
+    <div class="contents_div">
         <div id="beta_chart"></div>
         <div style="display: none">
             {{ price_change|safe }}

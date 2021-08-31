@@ -101,8 +101,8 @@ def get_ticker_stats(symbol, module_name_map):
         'modules': ','.join(module_list),
     }
     result = requests.get(url, params=params, headers=headers)
-    if result.status_code != 200 and result.status_code != 404:
-        result.raise_for_status()
+    # if result.status_code != 200 and result.status_code != 404:
+    #     result.raise_for_status()
 
     json_dict = result.json()
     if "quoteSummary" not in json_dict:
@@ -130,8 +130,8 @@ def quick_stats_request(request_symbol_list, field_list):
         'fields': ','.join(field_list),
     }
     result = requests.get("https://query1.finance.yahoo.com/v7/finance/quote", params=params, headers=headers)
-    if result.status_code != 200 and result.status_code != 404:
-        result.raise_for_status()
+    # if result.status_code != 200 and result.status_code != 404:
+    #     result.raise_for_status()
 
     json_dict = result.json()
     if "quoteResponse" not in json_dict:

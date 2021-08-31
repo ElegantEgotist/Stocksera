@@ -80,7 +80,7 @@ function sortTable(n) {
 
 const searchTicker = (elem) =>{
 let filter = elem.value.toUpperCase();
-let filter_table = elem.parentElement.querySelector("table");
+let filter_table = elem.parentElement.parentElement.querySelector("table");
 let tr = filter_table.getElementsByTagName('tr');
 for (var i = 0; i < tr.length; i++){
     let td = tr[i].getElementsByTagName('td')[0];

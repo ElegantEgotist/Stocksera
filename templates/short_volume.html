@@ -25,7 +25,7 @@
         <p>Short Volume measures the number of shares that have been shorted,  while Short Interest represents the number of shorted shares that have yet to be closed out or covered.</p>
         <form action="" method="GET" autocomplete="off">
             <div class="search_bar">
-                <input class="ticker_input" name="quote" id="quote" value="{{ticker_selected}}" placeholder="Ticker:" autocomplete="off">
+                <input type="text" class="ticker_input" name="quote" id="quote" value="{{ticker_selected}}" placeholder="Ticker:" autocomplete="off">
                 <button class="submit_btn" type="button" onclick="this.form.submit();this.disabled=true;"><img src="{% static 'images/search_icon.svg' %}"></button>
             </div>
         </form>
@@ -46,7 +46,7 @@
         <p>Currently, only popular tickers like {{included_list|safe}} have short volume data. If you like to see more tickers, drop me a message in the <a href="{% url 'about' %}" style="color:rgb(38, 166, 154)">About</a> section.</p>
     </div>
 
-    <div id="short_vol_data">
+    <div class="contents_div">
         <div id="ticker_basic_stats"></div>
 
         <div id="summary"></div>
@@ -71,30 +71,9 @@
         </form>
 
         <div class="scrollable_div" style="max-height: 800px">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Close Price</th>
-                        <th>Short Volume</th>
-                        <th>Total Volume</th>
-                        <th>% Shorted</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in short_volume_data %}
-                        <tr>
-                            <td>{{row.1}}</td>
-                            <td>${{row.2}}</td>
-                            <td>{{row.3}}</td>
-                            <td>{{row.4}}</td>
-                            <td>{{row.5}}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {{ short_volume_data|safe }}
         </div>
-        Note: The Total Volume and Short Volume data are limited. They do not represent the actual total volume.
+        <p>Note: The Total Volume and Short Volume data are limited. They do not represent the actual total volume.</p>
         <p>Data from: <a href="http://shortvolumes.com/" target="_blank">shortvolumes.com</a></p>
     </div>
 </div>

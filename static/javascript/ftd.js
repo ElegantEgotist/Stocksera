@@ -1,11 +1,3 @@
-function display_data() {
-    var error_msg_class = document.getElementById("error_msg").className;
-    if (error_msg_class == "instructions error_true") {
-        document.getElementById("error_msg").style.removeProperty("display");
-        document.getElementById("ftd").style.display = "none";
-    }
-}
-
 Date.prototype.addDays = function(days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);

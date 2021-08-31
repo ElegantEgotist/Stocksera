@@ -12,9 +12,9 @@ reddit = praw.Reddit(client_id=CLIENT_ID, client_secret=CLIENT_SECRET, user_agen
 conn = sqlite3.connect(r"database/database.db", check_same_thread=False)
 db = conn.cursor()
 
-interested_subreddits = {
-    "ALL": ["wallstreetbets", "stocks", "StockMarket", "options", "pennystocks", "investing", "SPACs", "Shortsqueeze"],
-    "GME": ["Superstonk", "GME"],
+interested_stocks_subreddits = {
+    "SUMMARY": ["wallstreetbets", "stocks", "options", "pennystocks", "SPACs", "Shortsqueeze"],
+    "GME": ["Superstonk"],
     "AMC": ["amcstock"],
     "CLOV": ["CLOV"],
     "BB": ["BB_Stock"],
@@ -49,7 +49,7 @@ interested_subreddits = {
     "CLNE": ["CLNE"],
     "WISH": ["Wishstock"],
     "CLF": ["clf_Stock"],
-    "GOEV": ["goev"],
+    "GOEV": ["canoo"],
     "DKNG": ["DKNG"],
     "AMZN": ["AMZN"],
     "XPEV": ["XPEV"],
@@ -68,9 +68,13 @@ interested_subreddits = {
     "LCID": ["LCID"],
     "NVAX": ["NVAX"],
     "MRNA": ["ModernaStock"],
-    "SPS": ["SOSStock"],
+    "SOS": ["SOSStock"],
     "CTRM": ["CTRM"],
+    "ATER": ["ATERstock"],
+    "RKLB": ["RKLB"],
+}
 
+interested_crypto_subreddits = {
     "CRYPTO": ["cryptocurrency"],
     "BTC": ["Bitcoin"],
     "ETH": ["ethereum"],
@@ -107,7 +111,7 @@ def subreddit_count():
     """
     print("-" * 100)
     print("Getting Subreddit Stats now ...")
-    for key, subreddit_names in interested_subreddits.items():
+    for key, subreddit_names in {**interested_stocks_subreddits, **interested_crypto_subreddits}.items():
         for subreddit_name in subreddit_names:
             subreddit = reddit.subreddit(subreddit_name)
             print("Looking at {} now.".format(subreddit))
@@ -125,7 +129,7 @@ def subreddit_count():
                 growth = 0
 
             db.execute("INSERT INTO subreddit_count VALUES (?, ?, ?, ?, ?, ?, ?)",
-                       (key, subreddit_name, subscribers, active, date_updated, percentage_active, growth))
+                       (date_updated, key, subreddit_name, subscribers, active, percentage_active, growth))
             conn.commit()
 
 

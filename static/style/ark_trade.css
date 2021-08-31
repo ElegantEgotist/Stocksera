@@ -1,9 +1,4 @@
 @media only screen and (max-width: 900px) {
-    .top_section {
-        width: 90%;
-        margin:auto;
-    }
-
     #profile span {
         font-size: 15px;
         font-weight: bold;
@@ -21,11 +16,6 @@
 }
 
 @media only screen and (min-width: 900px) {
-    .top_section {
-        width: 98%;
-        margin:auto;
-    }
-
     #profile span {
         font-size: 24px;
         font-weight: bold;
@@ -98,10 +88,6 @@ input {
 
 .fund_type:hover {
     cursor: pointer;
-}
-
-table {
-    width: 100%;
 }
 
 td div {

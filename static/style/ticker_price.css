@@ -1,9 +1,4 @@
 @media only screen and (max-width: 900px) {
-    .top_section {
-        width: 90%;
-        margin:auto;
-    }
-
     #ticker_table, .ticker_news {
         margin-left: auto;
         margin-right: auto;
@@ -17,21 +12,6 @@
         padding: 0 !important;
     }
 
-    #latest_price {
-        font-size: 24px;
-        display: flex;
-        margin-top: 1%;
-        width: 90vw;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    #latest_price div {
-        font-size: 10px;
-        width: 5vw;
-        margin-left: 1%;
-    }
-
     .show_more_btn {
         max-width: 70px;
         height: 40px;
@@ -39,11 +19,6 @@
 }
 
 @media only screen and (min-width: 900px) {
-    .top_section {
-        width: 98%;
-        margin:auto;
-    }
-
     #ticker_table, .ticker_news {
         margin-left: auto;
         margin-right: auto;
@@ -57,21 +32,6 @@
         padding: 0 !important;
     }
 
-    #latest_price {
-        font-size: 40px;
-        display: flex;
-        margin-top: 1%;
-        width: 98%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    #latest_price div {
-        font-size: 17px;
-        width: 10px;
-        margin-left: 1%;
-    }
-
     .show_more_btn {
         max-width: 95px;
         height: 55px;
@@ -80,10 +40,6 @@
 
 .change_day_btn:hover {
     background-color: #26a69a;
-}
-
-#error_msg {
-    margin-top: 5%;
 }
 
 .read_more {

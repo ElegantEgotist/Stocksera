@@ -24,16 +24,18 @@
         <p>View ranking of popular cryptocurrencies in Reddit over time and compare it with its price.</p>
     </div>
 
-    <div class="reddit_ticker_analysis">
+    <div class="contents_div">
         <form action="" method="GET" autocomplete="off">
             <select name="subreddit" onchange="this.form.submit()">
                 <option>Subreddit: CryptoCurrency</option>
             </select>
-            <input placeholder="TICKER: " name="quote" value="{{ticker_selected}}">
-            <button>SEARCH</button>
+            <div class="search_bar">
+                <input type="text" class="ticker_input" name="quote" value="{{ticker_selected}}" placeholder="Ticker:" autocomplete="off">
+                <button class="submit_btn" type="button" onclick="this.form.submit();this.disabled=true;"><img src="{% static 'images/search_icon.svg' %}"></button>
+            </div>
         </form>
 
-        <h2>Ranking of ${{ticker_selected}} in r/CryptoCurrency over time</h2>
+        <h2 class="ranking_header">Ranking of ${{ticker_selected}} in r/CryptoCurrency over time</h2>
         <div class="ranking_description">The lower the ranking, the more popular the ticker.</div>
 
         <div class="chart-container">

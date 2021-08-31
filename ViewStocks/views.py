@@ -3,6 +3,7 @@ import math
 from custom_extensions.custom_words import *
 from custom_extensions.stopwords import *
 from scheduled_tasks.get_popular_tickers import full_ticker_list
+from scheduled_tasks.reddit.get_subreddit_count import *
 from email_server import *
 from helpers import *
 
@@ -13,10 +14,10 @@ from pytrends.request import TrendReq
 from finvizfinance.quote import finvizfinance
 
 from django.shortcuts import render
-# from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-# analyzer = SentimentIntensityAnalyzer()
-# analyzer.lexicon.update(new_words)
+analyzer = SentimentIntensityAnalyzer()
+analyzer.lexicon.update(new_words)
 
 trends = TrendReq(hl='en-US', tz=360)
 
@@ -39,14 +40,10 @@ def stock_price(request):
     Get price and key statistics of a ticker. Data from yahoo finance
     """
     ticker_selected = default_ticker(request)
-    ticker = yf.Ticker(ticker_selected)
-    information = check_market_hours(ticker, ticker_selected)
-    symbol_list, description = get_all_tickers()
-    if "symbol" in information:
+    information = check_market_hours(ticker_selected)
+    if "longName" in information and information["regularMarketPrice"] != "N/A":
         return render(request, 'ticker_price.html', {"ticker_selected": ticker_selected,
                                                      "information": information,
-                                                     "symbol_list": symbol_list,
-                                                     "description": description
                                                      })
     else:
         return render(request, 'ticker_price.html', {"ticker_selected": ticker_selected,
@@ -232,8 +229,7 @@ def latest_news(request):
     Note: News are only available if hosted locally. Read README.md for more details
     """
     ticker_selected = default_ticker(request)
-    ticker = yf.Ticker(ticker_selected)
-    information = check_market_hours(ticker, ticker_selected)
+    information = check_market_hours(ticker_selected)
 
     # To check if input is a valid ticker
     if "symbol" in information:
@@ -419,15 +415,14 @@ def financial(request):
     ticker_selected = default_ticker(request)
     ticker = yf.Ticker(ticker_selected)
 
-    information = check_market_hours(ticker, ticker_selected)
+    information = check_market_hours(ticker_selected)
 
     # quarterly_cashflow = ticker.quarterly_cashflow
     # print(quarterly_cashflow)
     # for i in quarterly_cashflow.index.to_list():
     #     print(i)
 
-    # To check if input is a valid ticker
-    if "symbol" in information:
+    if "longName" in information and information["regularMarketPrice"] != "N/A":
         current_datetime = str(datetime.utcnow().date())
         with open(r"database/financials.json", "r+") as r:
             data = json.load(r)
@@ -460,7 +455,7 @@ def options(request):
     try:
         ticker = yf.Ticker(ticker_selected)
 
-        information = check_market_hours(ticker, ticker_selected)
+        information = check_market_hours(ticker_selected)
 
         options_dates = ticker.options
         if request.GET.get("date") not in ["", None]:
@@ -556,31 +551,41 @@ def short_volume(request):
     Get short volume of tickers (only popular ones). Data from shortvolumes.com
     """
     ticker_selected = default_ticker(request)
+    information = check_market_hours(ticker_selected)
 
-    sql_query = "SELECT * FROM short_volume WHERE ticker='{}' ORDER BY reported_date DESC".format(ticker_selected)
-    db.execute(sql_query)
-    short_volume_data = db.fetchall()
-    if short_volume_data:
-        ticker = yf.Ticker(ticker_selected)
-        information = check_market_hours(ticker, ticker_selected)
-        short_volume_data = list(map(list, short_volume_data))
+    if "longName" in information and information["regularMarketPrice"] != "N/A":
+        sql_query = "SELECT * FROM short_volume WHERE ticker='{}' ORDER BY reported_date DESC".format(ticker_selected)
+
+        pd.options.display.float_format = '{:.2f}'.format
+        short_volume_data = pd.read_sql_query(sql_query, conn)
+
+        if short_volume_data.empty:
+            short_volume_data = pd.read_csv("database/short_volume.csv")[::-1]
+            short_volume_data = short_volume_data[short_volume_data["ticker"] == ticker_selected]
+            # short_volume_data["reported_date"] = pd.to_datetime(short_volume_data['reported_date'], format="%d/%m/%Y").dt.date.astype(str)
+            history = pd.DataFrame(yf.Ticker(ticker_selected).history(interval="1d", period="1y")["Close"])
+            history.reset_index(inplace=True)
+            history["Date"] = history["Date"].astype(str)
+            short_volume_data = pd.merge(short_volume_data, history, on=["Date"], how="left")
 
         if "download_csv" in request.GET:
             file_name = "{}_short_volume.csv".format(ticker_selected)
-            ftd_df = pd.read_sql_query(sql_query, conn)
-            ftd_df.to_csv(file_name, index=False)
-            response = download_file(ftd_df, file_name)
+            short_volume_data.to_csv(file_name, index=False)
+            response = download_file(short_volume_data, file_name)
             return response
+
+        del short_volume_data["ticker"]
+
+        short_volume_data.rename(columns={"reported_date": "Date", "short_vol": "Short Volume",
+                                          "short_exempt_vol": "Short Exempt Vol", "total_vol": "Total Volume",
+                                          "percent": "% Shorted", "close_price": "Close Price"}, inplace=True)
 
         return render(request, 'short_volume.html', {"ticker_selected": ticker_selected,
                                                      "information": information,
-                                                     "short_volume_data": short_volume_data})
+                                                     "short_volume_data": short_volume_data.to_html(index=False)})
     else:
-        included_list = ", ".join(sorted(full_ticker_list()))
         return render(request, 'short_volume.html', {"ticker_selected": ticker_selected,
-                                                     "short_volume_data": short_volume_data,
-                                                     "error": "error_true",
-                                                     "included_list": included_list})
+                                                     "error": "error_true"})
 
 
 def failure_to_deliver(request):
@@ -588,11 +593,9 @@ def failure_to_deliver(request):
     Get FTD of tickers. Data from SEC
     """
     ticker_selected = default_ticker(request)
-    ticker = yf.Ticker(ticker_selected)
-    file_path = r"database/failure_to_deliver/ftd.csv"
-    if os.path.isfile(file_path):
-        information = check_market_hours(ticker, ticker_selected)
-        ftd = pd.read_csv(file_path)
+    information = check_market_hours(ticker_selected)
+    if "longName" in information and information["regularMarketPrice"] != "N/A":
+        ftd = pd.read_csv(r"database/failure_to_deliver/ftd.csv")
         ftd = ftd[ftd["Symbol"] == ticker_selected]
         ftd = ftd[::-1]
         ftd["Amount (FTD x $)"] = (ftd["Failure to Deliver"].astype(int) * ftd["Price"].astype(float)).astype(int)
@@ -609,10 +612,8 @@ def failure_to_deliver(request):
                                             "90th_percentile": ftd["Amount (FTD x $)"].quantile(0.90),
                                             "ftd": ftd.to_html(index=False)})
     else:
-        included_list = ", ".join(sorted(full_ticker_list()))
         return render(request, 'ftd.html', {"ticker_selected": ticker_selected,
-                                            "error": "error_true",
-                                            "included_list": included_list})
+                                            "error": "error_true"})
 
 
 def earnings_calendar(request):
@@ -742,8 +743,7 @@ def reddit_ticker_analysis(request):
     ranking = db.fetchall()
 
     if subreddit != "cryptocurrency":
-        ticker = yf.Ticker(ticker_selected)
-        information = check_market_hours(ticker, ticker_selected)
+        information = check_market_hours(ticker_selected)
         return render(request, 'reddit_stocks_analysis.html', {"ticker_selected": ticker_selected,
                                                                "information": information,
                                                                "ranking": ranking,
@@ -780,11 +780,33 @@ def subreddit_count(request):
     """
     Get subreddit user count, growth, active users over time.
     """
-    db.execute("SELECT * FROM subreddit_count WHERE subreddit in ('wallstreetbets', 'StockMarket', 'stocks', "
-               "'investing', 'amcstock', 'Superstonk', 'GME', 'options','pennystocks', 'cryptocurrency')")
-    subscribers = db.fetchall()
-    subscribers = list(map(list, subscribers))
-    return render(request, 'subreddit_count.html', {"subscribers": subscribers})
+    ticker_selected = request.GET.get("quote")
+    all_subreddits = sorted(interested_stocks_subreddits)
+    if ticker_selected and ticker_selected.upper() != "SUMMARY":
+        ticker_selected = ticker_selected.upper().replace(" ", "")
+        pd.options.display.float_format = '{:.2f}'.format
+        stats = pd.read_sql_query("SELECT * FROM subreddit_count WHERE ticker='{}'".format(ticker_selected), conn)
+        stats.rename(columns={"subscribers": "Redditors", "active": "Active", "updated_date": "Date",
+                              "percentage_active": "% Active", "growth": "% Growth"}, inplace=True)
+        information = check_market_hours(ticker_selected)
+        try:
+            subreddit = stats.iloc[0][2]
+            del stats["ticker"]
+            del stats["subreddit"]
+        except (TypeError, IndexError):
+            subreddit = "N/A"
+        return render(request, 'subreddit_count_individual.html', {"ticker_selected": ticker_selected,
+                                                                   "information": information,
+                                                                   "subreddit": subreddit,
+                                                                   "stats": stats[::-1].to_html(index=False),
+                                                                   "interested_subreddits": all_subreddits})
+    else:
+        db.execute("SELECT * FROM subreddit_count WHERE subreddit in ('wallstreetbets', 'stocks', "
+                   " 'amcstock', 'Superstonk', 'options','pennystocks', 'cryptocurrency')")
+        subscribers = db.fetchall()
+        subscribers = list(map(list, subscribers))
+    return render(request, 'subreddit_count.html', {"subscribers": subscribers,
+                                                    "interested_subreddits": all_subreddits})
 
 
 def market_overview(request):
@@ -925,7 +947,6 @@ def beta(request):
 
     price_change = df.pct_change()
     price_change.dropna(inplace=True)
-
     price_change.reset_index(inplace=True)
 
     coef = linear_regression(price_change[default].values, price_change[ticker_interested].values)

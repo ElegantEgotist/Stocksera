@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <div class="hedge_funds">
+    <div class="contents_div">
         <h2>{{description.name}}</h2>
         <form action="" method="GET" id="form">
             <input id="page_num" name="page_num" style="display: none" value="{{page_num}}">
@@ -53,8 +53,10 @@
                     <option>{{sort}}</option>
                 {% endfor %}
             </select>
-            <input placeholder="TICKER: " name="quote" autocomplete="off" value="{{ticker_selected}}">
-            <button type="submit">Search</button>
+            <div class="search_bar">
+                <input type="text" class="ticker_input" name="quote" id="quote" value="{{ticker_selected}}" placeholder="Ticker:" autocomplete="off">
+                <button class="submit_btn" type="submit"><img src="{% static 'images/search_icon.svg' %}"></button>
+            </div>
 
             <div>{{description.description}}</div>
             <a href="{{description.website}}" target="_blank" class="read_more"><i>View More (whalewisdom)</i></a>

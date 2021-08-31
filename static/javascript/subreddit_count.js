@@ -1,79 +1,65 @@
 var wsb_chart = null;
 
+function find_day_gain(list_name, id) {
+    list_length = list_name.length;
+    var diff = list_name[list_length-1] - list_name[list_length-2];
+    var percentage_diff = Math.round(diff / list_name[list_length-2] * 10000) / 100
+    document.getElementById(id).innerHTML = "+" + diff + "<br> +" + percentage_diff + "%";
+}
+
 function subreddit_count(duration) {
     var date_threshold = get_date_difference(duration, "-")
     var wsb_date = [], wsb_count = [], wsb_active = [] , wsb_growth = []
     stocks_date = [], stocks_active = [] , stocks_count = [], stocks_growth = []
-    StockMarket_date = [], StockMarket_count = [], StockMarket_active = [], StockMarket_growth = []
-    gme_date = [], gme_count = [], gme_active = [], gme_growth = []
     superstonk_date = [], superstonk_count = [], superstonk_active = [], superstonk_growth = []
     amc_date = [], amc_count = [], amc_active = [], amc_growth = []
     options_date = [], options_count = [], options_active = [], options_growth = []
     pennystocks_date = [], pennystocks_count = [], pennystocks_active = [], pennystocks_growth = []
-    investing_date = [], investing_count = [], investing_active = [], investing_growth = []
     crypto_date = [], crypto_count = [], crypto_active = [], crypto_growth = []
 
     for (subscribers of subscribers_list) {
-        if (subscribers[4] >= date_threshold) {
-            if (subscribers[1] == "wallstreetbets") {
-                wsb_count.push(subscribers[2])
+        if (subscribers[0] >= date_threshold) {
+            if (subscribers[2] == "wallstreetbets") {
+                wsb_count.push(subscribers[3])
                 wsb_active.push(subscribers[5])
                 wsb_growth.push(subscribers[6])
-                wsb_date.push(subscribers[4])
+                wsb_date.push(subscribers[0])
             }
-            else if (subscribers[1] == "stocks") {
-                stocks_count.push(subscribers[2])
+            else if (subscribers[2] == "stocks") {
+                stocks_count.push(subscribers[3])
                 stocks_active.push(subscribers[5])
                 stocks_growth.push(subscribers[6])
-                stocks_date.push(subscribers[4])
+                stocks_date.push(subscribers[0])
             }
-            else if (subscribers[1] == "StockMarket") {
-                StockMarket_count.push(subscribers[2])
-                StockMarket_active.push(subscribers[5])
-                StockMarket_growth.push(subscribers[6])
-                StockMarket_date.push(subscribers[4])
-            }
-            else if (subscribers[1] == "Superstonk") {
-                superstonk_count.push(subscribers[2])
+            else if (subscribers[2] == "Superstonk") {
+                superstonk_count.push(subscribers[3])
                 superstonk_active.push(subscribers[5])
                 superstonk_growth.push(subscribers[6])
-                superstonk_date.push(subscribers[4])
+                superstonk_date.push(subscribers[0])
             }
-            else if (subscribers[1] == "options") {
-                options_count.push(subscribers[2])
+            else if (subscribers[2] == "options") {
+                options_count.push(subscribers[3])
                 options_active.push(subscribers[5])
                 options_growth.push(subscribers[6])
-                options_date.push(subscribers[4])
+                options_date.push(subscribers[0])
             }
-            else if (subscribers[1] == "amcstock") {
-                amc_count.push(subscribers[2])
+            else if (subscribers[2] == "amcstock") {
+                amc_count.push(subscribers[3])
                 amc_active.push(subscribers[5])
                 amc_growth.push(subscribers[6])
-                amc_date.push(subscribers[4])
+                amc_date.push(subscribers[0])
             }
-            else if (subscribers[1] == "GME") {
-                gme_count.push(subscribers[2])
-                gme_active.push(subscribers[5])
-                gme_growth.push(subscribers[6])
-                gme_date.push(subscribers[4])
-            }
-            else if (subscribers[1] == "pennystocks") {
-                pennystocks_count.push(subscribers[2])
+            else if (subscribers[2] == "pennystocks") {
+                pennystocks_count.push(subscribers[3])
                 pennystocks_active.push(subscribers[5])
                 pennystocks_growth.push(subscribers[6])
-                pennystocks_date.push(subscribers[4])
+                pennystocks_date.push(subscribers[0])
             }
-            else if (subscribers[1] == "investing") {
-                investing_count.push(subscribers[2])
-                investing_active.push(subscribers[5])
-                investing_growth.push(subscribers[6])
-                investing_date.push(subscribers[4])
-            }
-            else if (subscribers[1] == "cryptocurrency") {
-                crypto_count.push(subscribers[2])
+            else if (subscribers[2] == "cryptocurrency") {
+                crypto_count.push(subscribers[3])
                 crypto_active.push(subscribers[5])
                 crypto_growth.push(subscribers[6])
-                crypto_date.push(subscribers[4])
+                crypto_date.push(subscribers[0])
             }
         }
     }
@@ -128,13 +114,10 @@ function subreddit_count(duration) {
     if (wsb_chart != null){
         wsb_chart.destroy();
         stocks_chart.destroy();
-        StockMarket_chart.destroy();
         options_chart.destroy();
-        gme_chart.destroy();
         superstonk_chart.destroy();
         amc_chart.destroy();
         pennystocks_chart.destroy();
-        investing_chart.destroy();
         crypto_chart.destroy();
         growth_chart.destroy();
         active_chart.destroy();
@@ -170,21 +153,6 @@ function subreddit_count(duration) {
         options: options_dict
     });
 
-    StockMarket_chart = document.getElementById('StockMarket_chart');
-    StockMarket_chart = new Chart(StockMarket_chart, {
-        type: 'line',
-        data: {
-            labels: StockMarket_date,
-            datasets: [{
-                data: StockMarket_count,
-                borderColor: 'rgb(38, 166, 154)',
-                backgroundColor: 'transparent',
-                tension: 0.1,
-            }]
-        },
-        options: options_dict
-    });
-
     options_chart = document.getElementById('options_chart');
     options_chart = new Chart(options_chart, {
         type: 'line',
@@ -193,21 +161,6 @@ function subreddit_count(duration) {
             datasets: [{
                 data: options_count,
                 borderColor: '#4affff',
-                backgroundColor: 'transparent',
-                tension: 0.1,
-            }]
-        },
-        options: options_dict
-    });
-
-    gme_chart = document.getElementById('gme_chart');
-    gme_chart = new Chart(gme_chart, {
-        type: 'line',
-        data: {
-            labels: gme_date,
-            datasets: [{
-                data: gme_count,
-                borderColor: '#00b0ff',
                 backgroundColor: 'transparent',
                 tension: 0.1,
             }]
@@ -260,21 +213,6 @@ function subreddit_count(duration) {
         options: options_dict
     });
 
-    investing_chart = document.getElementById('investing_chart');
-    investing_chart = new Chart(investing_chart, {
-        type: 'line',
-        data: {
-            labels: investing_date,
-            datasets: [{
-                data: investing_count,
-                borderColor: '#64a913',
-                backgroundColor: 'transparent',
-                tension: 0.1,
-            }]
-        },
-        options: options_dict
-    });
-
     crypto_chart = document.getElementById('crypto_chart');
     crypto_chart = new Chart(crypto_chart, {
         type: 'line',
@@ -282,7 +220,7 @@ function subreddit_count(duration) {
             labels: crypto_date,
             datasets: [{
                 data: crypto_count,
-                borderColor: '#d73d08',
+                borderColor: 'green',
                 backgroundColor: 'transparent',
                 tension: 0.1,
             }]
@@ -311,20 +249,6 @@ function subreddit_count(duration) {
                     tension: 0.1,
                 },
                 {
-                    label: "StockMarket",
-                    data: StockMarket_growth,
-                    borderColor: 'rgb(38, 166, 154)',
-                    backgroundColor: 'transparent',
-                    tension: 0.1,
-                },
-                {
-                    label: "GME",
-                    data: gme_growth,
-                    borderColor: '#00b0ff',
-                    backgroundColor: 'transparent',
-                    tension: 0.1,
-                },
-                {
                     label: "Superstonk",
                     data: superstonk_growth,
                     borderColor: 'grey',
@@ -335,6 +259,13 @@ function subreddit_count(duration) {
                     label: "amcstock",
                     data: amc_growth,
                     borderColor: '#ad001d',
+                    backgroundColor: 'transparent',
+                    tension: 0.1,
+                },
+                {
+                    label: "cryptocurrency",
+                    data: crypto_growth,
+                    borderColor: 'green',
                     backgroundColor: 'transparent',
                     tension: 0.1,
                 }]
@@ -412,20 +343,6 @@ function subreddit_count(duration) {
                     tension: 0.1,
                 },
                 {
-                    label: "StockMarket",
-                    data: StockMarket_active,
-                    borderColor: 'rgb(38, 166, 154)',
-                    backgroundColor: 'transparent',
-                    tension: 0.1,
-                },
-                {
-                    label: "GME",
-                    data: gme_active,
-                    borderColor: '#00b0ff',
-                    backgroundColor: 'transparent',
-                    tension: 0.1,
-                },
-                {
                     label: "Superstonk",
                     data: superstonk_active,
                     borderColor: 'grey',
@@ -436,6 +353,13 @@ function subreddit_count(duration) {
                     label: "amcstock",
                     data: amc_active,
                     borderColor: '#ad001d',
+                    backgroundColor: 'transparent',
+                    tension: 0.1,
+                },
+                {
+                    label: "cryptocurrency",
+                    data: crypto_active,
+                    borderColor: 'green',
                     backgroundColor: 'transparent',
                     tension: 0.1,
                 }]
@@ -484,7 +408,6 @@ function subreddit_count(duration) {
                     return "r/" + label + ': ' + value + '%';
                 }
             }
-
         },
         hover: {
             mode: 'index',
@@ -493,21 +416,244 @@ function subreddit_count(duration) {
     }
     });
 
-    function find_day_gain(list_name, id) {
-        list_length = list_name.length;
-        var diff = list_name[list_length-1] - list_name[list_length-2];
-        var percentage_diff = Math.round(diff / list_name[list_length-2] * 10000) / 100
-        document.getElementById(id).innerHTML = "+" + diff + "<br> +" + percentage_diff + "%";
-    }
-
     find_day_gain(wsb_count, "wsb_diff")
     find_day_gain(stocks_count, "stocks_diff")
-    find_day_gain(StockMarket_count, "stockmarket_diff")
     find_day_gain(options_count, "options_diff")
-    find_day_gain(gme_count, "gamestop_diff")
     find_day_gain(superstonk_count, "superstonk_diff")
     find_day_gain(amc_count, "amc_diff")
     find_day_gain(pennystocks_count, "pennystocks_diff")
-    find_day_gain(investing_count, "investing_diff")
     find_day_gain(crypto_count, "crypto_diff")
+}
+
+function subreddit_individual(duration) {
+    var date_threshold = get_date_difference(duration, "-")
+    var subreddit_date = [], subreddit_count = [], subreddit_active = [] , subreddit_growth = []
+    var tr = document.getElementsByTagName("table")[0].querySelectorAll("tr")
+    for (i=tr.length-1; i>0; i--) {
+        var td = tr[i].querySelectorAll("td")
+        subreddit_date.push(td[0].innerHTML)
+        subreddit_count.push(td[1].innerHTML)
+        subreddit_active.push(td[3].innerHTML)
+        subreddit_growth.push(td[4].innerHTML)
+    }
+
+//    subreddit_chart = document.getElementById('subreddit_chart');
+//    subreddit_chart = new Chart(subreddit_chart, {
+//        data: {
+//            labels: subreddit_date,
+//            datasets: [
+//                {
+//                    label: 'Num Redditors',
+//                    type: 'line',
+//                    data: subreddit_count,
+//                    borderColor: 'rgb(38, 166, 154)',
+//                    backgroundColor: 'transparent',
+//                    yAxisID: 'A',
+//                },
+//                {
+//                    label: '% Active',
+//                    type: 'bar',
+//                    data: subreddit_active,
+//                    borderColor: 'wheat',
+//                    backgroundColor: 'wheat',
+//                    yAxisID: 'B',
+//                },
+//                {
+//                    label: '% Growth',
+//                    type: 'bar',
+//                    data: subreddit_growth,
+//                    borderColor: 'blue',
+//                    backgroundColor: 'blue',
+//                    yAxisID: 'B',
+//                }]
+//        },
+//
+//        options: {
+//            responsive: true,
+//            maintainAspectRatio: false,
+//            legend: {
+//                display: true
+//            },
+//            scales: {
+//                yAxes: [
+//                    {
+//                        position: 'left',
+//                        gridLines: {
+//                            display: false
+//                        },
+//                        type: "linear",
+//                        id: "A",
+//                        scaleLabel: {
+//                            display: true,
+//                            labelString: 'Num Redditors',
+//                            beginAtZero: false,
+//                        }
+//                    },
+//                    {
+//                        scaleLabel: {
+//                            display: true,
+//                            labelString: 'Percentage',
+//                            beginAtZero: true,
+//                        },
+//                        type: "linear",
+//                        id: "B",
+//                        position:"right",
+//                        gridLines: {
+//                            display: false
+//                        },
+//                        ticks: {
+//                            callback: function(value, index, values) {
+//                                return value + "%";
+//                            }
+//                        },
+//                    }],
+//
+//                xAxes: [{
+//                    offset: true,
+//                    ticks: {
+//                      maxTicksLimit: 10,
+//                      maxRotation: 45,
+//                      minRotation: 0,
+//                    },
+//                    gridLines: {
+//                        drawOnChartArea: false
+//                    },
+//                    stacked: false
+//                }],
+//            },
+//            pan: {
+//                enabled: true,
+//                mode: "x",
+//                speed: 10,
+//                threshold: 10
+//            },
+//            zoom: {
+//                enabled: true,
+//                drag: false,
+//                mode: "xy",
+//                speed: 1
+//            },
+//
+//            // To show value when hover on any part of the graph
+//            tooltips: {
+//                mode: 'index',
+//                intersect: false,
+//            },
+//            hover: {
+//                mode: 'index',
+//                intersect: false
+//            },
+//            elements: {
+//                line: {
+//                    tension: 0
+//                },
+//                point:{
+//                    radius: 0
+//                }
+//            },
+//        },
+//    });
+
+    var trace1 = {
+        x: subreddit_date,
+        y: subreddit_count,
+        name: "Num Redditors",
+        line: {'color': 'rgb(38, 166, 154)'},
+        hovertemplate:
+                "Num Redditors: %{y}<br>" +
+                "<extra></extra>",
+        type: 'scatter'
+    };
+
+    var trace2 = {
+        x: subreddit_date,
+        y: subreddit_growth,
+        yaxis: 'y2',
+        name: "% Growth",
+        hovertemplate:
+                "% Growth: %{y}%<br>" +
+                "<extra></extra>",
+        type: 'bar',
+        marker: {
+            color: 'orange',
+        }
+    };
+
+    var trace3 = {
+        x: subreddit_date,
+        y: subreddit_active,
+        yaxis: 'y2',
+        name: "% Active",
+        hovertemplate:
+                "% Active: %{y}%<br>" +
+                "<extra></extra>",
+        type: 'bar',
+        marker: {
+            color: 'rgb(158,202,225)',
+            opacity: 0.6,
+            line: {
+                color: 'rgb(8,48,107)',
+                width: 1.5
+            }
+        }
+    };
+
+    var layout = {
+        autosize: true,
+        margin: {
+            t:30,
+            l:50,
+            r:50,
+            pad: 0
+        },
+        automargin: true,
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        xaxis: {
+            showgrid: false,
+            showline: true,
+            color: "gray",
+            title: {
+                text: 'Date',
+                font: {
+                      size: 12,
+                }
+            },
+        },
+        yaxis: {
+            showgrid: false,
+            showline: true,
+            color: "gray",
+            title: {
+                text: 'Num Redditors',
+                font: {
+                      size: 11,
+                }
+            },
+        },
+        yaxis2: {
+            showgrid: false,
+            showline: true,
+            color: "gray",
+            title: {
+                text: 'Percentage',
+                font: {
+                      size: 11,
+                }
+            },
+            overlaying: 'y',
+            side: 'right',
+        },
+        hovermode:'x',
+        legend: {
+            x: 0.5,
+            xanchor: 'center',
+            y: 1.1,
+            orientation: 'h'
+        }
+    };
+
+    var data = [trace1, trace2, trace3];
+    Plotly.newPlot('chart', data, layout, {displayModeBar: false, showTips: true, responsive: true});
+
 }

@@ -1,3 +1,11 @@
+function display_data() {
+    var error_msg_class = document.getElementById("error_msg").className;
+    if (error_msg_class == "instructions error_true") {
+        document.getElementById("error_msg").style.removeProperty("display");
+        document.getElementsByClassName("contents_div")[0].style.display = "none";
+    }
+}
+
 function update_price_color() {
     var tickers = document.getElementsByClassName("ticker_item");
     for (i=0; i<tickers.length; i++) {
@@ -26,7 +34,7 @@ function top_right_nav(elem) {
     }
     else {
         elem.classList.add("opened")
-        nav_bar_div.style.height = "270px";
+        nav_bar_div.style.height = "280px";
         nav_bar_div.style.width = "100%";
         nav_bar_div.querySelector("ul").style.display = "block"
         dark_mode_btn.style.display = "block"
@@ -135,7 +143,7 @@ function show_ticker_price(information) {
     if (current_mkt_status == "PRE") {
         mkt_pre_post_code = `<div style="font-size:9px">Pre: $${Math.round((Number(latest_price.replace(",", "")) + Number(information["preMarketChange"])) * 100) / 100} (${information["preMarketChangePercent"]})</div> `
     }
-    else if (current_mkt_status == "PREPRE" || current_mkt_status == "POST" || current_mkt_status == "POSTPOST") {
+    else if (current_mkt_status == "PREPRE" || current_mkt_status == "POST" || current_mkt_status == "POSTPOST" || current_mkt_status == "CLOSED") {
         mkt_pre_post_code = `<div style="font-size:9px">Post: $${Math.round((Number(latest_price.replace(",", "")) + Number(information["postMarketChange"])) * 100) / 100} (${information["postMarketChangePercent"]})</div> `
     }
     else {
@@ -191,9 +199,9 @@ function get_economic_releases(elem) {
     today_date = year + "-" + month + "-" + day
 
     rrp = elem["Reverse Repo"]["Release Date"]
-    treasury = elem["Daily Treasury"]["Release Date"]
-    inflation = elem["Inflation"]["Release Date"]
-    retail_sales = elem["Retail Sales"]["Release Date"]
+    treasury_json = elem["Daily Treasury"]["Release Date"]
+    inflation_json = elem["Inflation"]["Release Date"]
+    retail_sales_json = elem["Retail Sales"]["Release Date"]
 
     if (rrp == today_date) {
         rrp_code = `<div style="color:red">RRP: ${rrp} </div>`
@@ -201,25 +209,24 @@ function get_economic_releases(elem) {
     else {
         rrp_code = `<div>RRP: ${rrp} </div>`
     }
-    if (treasury == today_date) {
-        treasury_code = `<div style="color:red">Treasury: ${treasury} </div>`
+    if (treasury_json == today_date) {
+        treasury_code = `<div style="color:red">Treasury: ${treasury_json} </div>`
     }
     else {
-        treasury_code = `<div>Treasury: ${treasury} </div>`
+        treasury_code = `<div>Treasury: ${treasury_json} </div>`
     }
-    if (inflation == today_date) {
-        inflation_code = `<div style="color:red">Inflation: ${inflation} (Pre)</div>`
-    }
-    else {
-        inflation_code = `<div>Inflation: ${inflation} (Pre)</div>`
-    }
-    if (retail_sales == today_date) {
-        retail_sales_code = `<div style="color:red">Retail Sales: ${retail_sales} (Pre)</div>`
+    if (inflation_json == today_date) {
+        inflation_code = `<div style="color:red">Inflation: ${inflation_json} (Pre)</div>`
     }
     else {
-        retail_sales_code = `<div>Retail Sales: ${retail_sales} (Pre)</div>`
+        inflation_code = `<div>Inflation: ${inflation_json} (Pre)</div>`
     }
-
+    if (retail_sales_json == today_date) {
+        retail_sales_code = `<div style="color:red">Retail Sales: ${retail_sales_json} (Pre)</div>`
+    }
+    else {
+        retail_sales_code = `<div>Retail Sales: ${retail_sales_json} (Pre)</div>`
+    }
 
     code = `
             <div style="display:inline-block;width:52%">

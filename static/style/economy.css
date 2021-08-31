@@ -1,21 +1,3 @@
-@media only screen and (max-width: 900px) {
-    .inflation {
-        width: 90%;
-        margin:auto;
-    }
-
-    th, td {
-        padding: 3px;
-    }
-}
-
-@media only screen and (min-width: 900px) {
-    .inflation {
-        width: 98%;
-        margin:auto;
-    }
-}
-
 .chart-container {
     position: relative;
     height:55vh;
