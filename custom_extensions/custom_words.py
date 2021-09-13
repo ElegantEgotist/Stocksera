@@ -74,6 +74,8 @@ new_words = {
     "diving": -2.2,
     "fall": -2,
     "falling": -2,
+    "tumble": -3,
+    "tumbling": -3,
     "falls": -2,
     "fell": -2,
     "sink": -2,
@@ -111,6 +113,7 @@ new_words = {
     "underperforming": -2,
     "pop": 1.5,
     "jump": 2,
+    "supercharge": 2.5,
     "jumped": 2,
     "popped": 1.5,
     "tank": -1.5,
@@ -190,4 +193,5 @@ new_words = {
     "outpaces": 2,
     "outpacing": 2,
     "inflation": -2,
+    "antitrust": -2,
 }

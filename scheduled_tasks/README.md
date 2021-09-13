@@ -1,4 +1,3 @@
-
 # StocksEra Developers Guide
 
 ### Scheduled Tasks to run 
@@ -20,6 +19,7 @@ Before continuing, register for an API in the links shown below.
 | -------------- |---------------------------------------------------- | ---------------------------------------- |
 | Reddit         | https://www.reddit.com/prefs/apps                   | scheduled_tasks/reddit/config.py         |
 | Twitter        | https://developer.twitter.com/en/portal/dashboard   | scheduled_tasks/get_twitter_followers.py |
+| Finnhub        | https://finnhub.io/                                 | helpers.py
 | Gmail -optional| https://realpython.com/python-send-email/           | email_server.py                          |
 
 You can view a sample of the database in <a href="https://drive.google.com/drive/folders/1qR7ssxnNzOUuvYCWR-kEajyoRoGKjbcT?usp=sharing">this</a> Google Drive link.
@@ -73,6 +73,8 @@ You can view a sample of the database in <a href="https://drive.google.com/drive
 #### scheduled_tasks/economy/get_retail_sales.py
 - Get monthly retail sales and compare it with the number of Covid-19 cases
 
+#### scheduled_tasks/economy/get_upcoming_events_date.py
+
 #### scheduled_tasks/get_financial.py
 - Get financial data for companies.
 
@@ -83,3 +85,6 @@ You can view a sample of the database in <a href="https://drive.google.com/drive
 - Get Failure to Deliver data from [SEC](https://www.sec.gov/data/foiadocsfailsdatahtm).
 - Download the txt file. You do not need to convert it to csv. The script automatically does it for you.
 - Run this script once every few weeks.
+
+#### scheduled_tasks/reset_stocksera_trending.py
+- Reset Stocksera trending table in database
