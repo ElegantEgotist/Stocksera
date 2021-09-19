@@ -48,6 +48,10 @@ pattern = "(?<=\$)?\\b[A-Z]{2,5}\\b(?:\.[A-Z]{1,2})?"
 if not os.path.exists("static/graph_chart"):
     os.mkdir("static/graph_chart")
 
+# Create folder for stock charts
+if not os.path.exists("static/graph_chart/stocks"):
+    os.mkdir("static/graph_chart/stocks")
+
 
 def get_sentiment(text, increment):
     vs = analyzer.polarity_scores(text)

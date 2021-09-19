@@ -25,6 +25,10 @@ comments_factor = 3
 # rocket emoji
 rocket = '🚀'
 
+# Create folder to store crypto charts
+if not os.path.exists("static/graph_chart/crypto"):
+    os.mkdir("static/graph_chart/crypto")
+
 
 def coinbase_coins():
     # List of crypto symbols interest in
