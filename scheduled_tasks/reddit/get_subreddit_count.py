@@ -78,7 +78,9 @@ interested_stocks_subreddits = {
     "ATER": ["ATERstock"],
     "RKLB": ["RKLB"],
     "BBIG": ["BBIG"],
-    "SAVA": ["SAVA_stock"]
+    "SAVA": ["SAVA_stock"],
+    "GREE": ["gree"],
+    "CEI": ["CEI_stock"]
 }
 
 interested_crypto_subreddits = {
@@ -182,5 +184,10 @@ def update_last_price():
                 conn.commit()
 
 
-if __name__ == '__main__':
+def main():
+    subreddit_count()
     update_last_price()
+
+
+if __name__ == '__main__':
+    main()

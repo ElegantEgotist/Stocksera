@@ -23,11 +23,11 @@ header = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHT
                         "50.0.2661.75 Safari/537.36", "X-Requested-With": "XMLHttpRequest"}
 
 
-def default_ticker(request):
+def default_ticker(request, ticker="AAPL"):
     if request.GET.get("quote"):
         ticker_selected = request.GET['quote'].upper().replace(" ", "")
     else:
-        ticker_selected = "AAPL"
+        ticker_selected = ticker
     return ticker_selected
 
 
@@ -84,21 +84,23 @@ def check_market_hours(ticker_selected):
 
     if "longName" in information and information["regularMarketPrice"] != "N/A":
         # Uncomment this if the bottom does not work!
-        # db.execute("SELECT * FROM stocksera_trending WHERE symbol=?", (ticker_selected,))
-        # count = db.fetchone()
-        # if count is None:
-        #     count = 1
-        # else:
-        #     count = count[2] + 1
+        # if "." not in ticker_selected:
+        #     db.execute("SELECT * FROM stocksera_trending WHERE symbol=?", (ticker_selected,))
+        #     count = db.fetchone()
+        #     if count is None:
+        #         count = 1
+        #     else:
+        #         count = count[2] + 1
         #
-        # db.execute("DELETE from stocksera_trending WHERE symbol=?", (ticker_selected,))
-        # db.execute("INSERT INTO stocksera_trending (symbol, name, count) VALUES (?, ?, ?) ",
-        #            (ticker_selected, information["longName"], count))
+        #     db.execute("DELETE from stocksera_trending WHERE symbol=?", (ticker_selected,))
+        #     db.execute("INSERT INTO stocksera_trending (symbol, name, count) VALUES (?, ?, ?) ",
+        #                (ticker_selected, information["longName"], count))
 
         # Comment this if you face an error. Uncomment the top instead.
-        db.execute("INSERT INTO stocksera_trending (symbol, name, count) VALUES (?, ?, 1) ON CONFLICT (symbol) "
-                   "DO UPDATE SET count=count+1", (ticker_selected, information["longName"]))
-        conn.commit()
+        if "." not in ticker_selected:
+            db.execute("INSERT INTO stocksera_trending (symbol, name, count) VALUES (?, ?, 1) ON CONFLICT (symbol) "
+                       "DO UPDATE SET count=count+1", (ticker_selected, information["longName"]))
+            conn.commit()
 
         db.execute("SELECT * FROM related_tickers WHERE ticker=?", (ticker_selected, ))
         related_tickers = db.fetchall()
@@ -152,6 +154,32 @@ def convert_date(date):
     return date[0].split()[0]
 
 
+# def get_loss_at_strike(strike, chain):
+#     """
+#     Function to get the loss at the given expiry
+#     Parameters
+#     ----------
+#     strike: Union[int,float]
+#         Value to calculate total loss at
+#     chain: Dataframe:
+#         Dataframe containing at least strike and openInterest
+#     Returns
+#     -------
+#     loss: Union[float,int]
+#         Total loss
+#     """
+#
+#     itm_calls = chain[chain.index < strike][["oi_x"]]
+#     itm_calls["loss"] = (strike - itm_calls.index) * itm_calls["oi_x"]
+#     call_loss = round(itm_calls["loss"].sum() / 10000, 2)
+#
+#     # The *-1 below is due to a sign change for plotting in the _view code
+#     itm_puts = chain[chain.index > strike][["oi_y"]]
+#     itm_puts["loss"] = (itm_puts.index - strike) * itm_puts["oi_y"] * -1
+#     put_loss = round(itm_puts.loss.sum() / 10000, 2)
+#     loss = call_loss + put_loss
+#     return loss, call_loss, put_loss
+
 def get_loss_at_strike(strike, chain):
     """
     Function to get the loss at the given expiry
@@ -196,9 +224,10 @@ def get_max_pain(chain):
         Total money value of the put options at the particular strike
     """
     strikes = np.array(chain.index)
-    if ("OI Calls" not in chain.columns) or ("OI Puts" not in chain.columns):
-        print("Incorrect columns.  Unable to parse max pain")
-        return np.nan
+    # if ("OI Calls" not in chain.columns) or ("OI Puts" not in chain.columns):
+    #     print("Incorrect columns.  Unable to parse max pain")
+    #     return np.nan
+    chain["oi_y"] = -chain["oi_y"]
     loss_list, call_loss_list, put_loss_list = [], [], []
     for price_at_exp in strikes:
         net_loss, call_loss, put_loss = get_loss_at_strike(price_at_exp, chain)
@@ -241,9 +270,9 @@ def get_ticker_news(ticker_selected):
         for index, row in news_df.iterrows():
             vs = analyzer.polarity_scores(row["Title"])
             sentiment_score = vs['compound']
-            if sentiment_score > 0.25:
+            if sentiment_score > 0.2:
                 sentiment = "Bullish"
-            elif sentiment_score < -0.25:
+            elif sentiment_score < -0.2:
                 sentiment = "Bearish"
             else:
                 sentiment = "Neutral"
@@ -269,12 +298,25 @@ def get_insider_trading(ticker_selected):
         ticker_fin = finvizfinance(ticker_selected)
         inside_trader_df = ticker_fin.TickerInsideTrader()
         inside_trader_df["Insider Trading"] = inside_trader_df["Insider Trading"].str.title()
-        inside_trader_df.rename(columns={"Insider Trading": "Name"}, inplace=True)
+        inside_trader_df.rename(columns={"Insider Trading": "Name", "SEC Form 4 Link": ""}, inplace=True)
+        inside_trader_df["Date"] = inside_trader_df["Date"] + " 2021"
+        inside_trader_df["Date"] = pd.to_datetime(inside_trader_df["Date"], format="%b %d %Y")
         del inside_trader_df["Insider_id"]
         del inside_trader_df["SEC Form 4"]
+        last_date = datetime.utcnow().date()
+        for index, row in inside_trader_df.iterrows():
+            if row[2] > last_date:
+                x = row[2] - timedelta(days=365)
+            else:
+                x = row[2]
+            date_to_insert = str(x).split()[0]
+            last_date = x
+            db.execute("INSERT INTO insider_trading VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                       (ticker_selected, row[0], row[1], date_to_insert, row[3], row[4], row[5], row[6], row[7], row[8]))
+            conn.commit()
     except:
-        inside_trader_df = pd.DataFrame(columns=["Name", "Relationship", "Date", "Transaction", "Cost", "Shares", "Value ($)", "#Shares Total"])
-        inside_trader_df.loc[0] = ["N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]
+        inside_trader_df = pd.DataFrame(columns=["Name", "Relationship", "Date", "Transaction", "Cost", "Shares", "Value ($)", "#Shares Total", ""])
+        inside_trader_df.loc[0] = ["N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]
     return inside_trader_df
 
 

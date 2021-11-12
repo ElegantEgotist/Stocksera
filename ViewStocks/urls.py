@@ -11,9 +11,14 @@ urlpatterns = [
     path('ticker/failure_to_deliver/', views.failure_to_deliver, name='failure_to_deliver'),
     path('reddit_analysis/', views.reddit_analysis, name='reddit_analysis'),
     path('wsb_live/', views.wsb_live, name='wsb_live'),
+    path('wsb_live_ticker/', views.wsb_live_ticker, name="wsb_live_ticker"),
+    path('crypto_live/', views.crypto_live, name='crypto_live'),
+    path('crypto_live_ticker/', views.crypto_live_ticker, name="crypto_live_ticker"),
+    path('wsb_documentation/', views.wsb_documentation, name="wsb_documentation"),
     path('reddit_ticker_analysis/', views.reddit_ticker_analysis, name='reddit_ticker_analysis'),
     path('latest_insider/', views.latest_insider, name='latest_insider'),
-    path('market_overview/', views.market_overview, name='market_overview'),
+    path('market_summary/', views.market_summary, name='market_summary'),
+    path('senate/', views.senate_trades, name='senate'),
     path('reverse_repo/', views.reverse_repo, name='reverse_repo'),
     path('daily_treasury/', views.daily_treasury, name='daily_treasury'),
     path('inflation/', views.inflation, name='inflation'),
@@ -39,5 +44,10 @@ urlpatterns = [
     path('beta/', views.beta, name='beta'),
     path('covid_beta/', views.covid_beta, name='covid_beta'),
     path('about/', views.about, name='about'),
-    path('loading/', views.loading_spinner, name='loading')
+    path('loading/', views.loading_spinner, name='loading'),
+
+    path('subscribe/', views.subscribe_to_wsb_notifications, name='subscribe'),
+    path('mailing_preference/', views.mailing_preference, name='mailing_preference'),
+    path('unsubscribe/', views.unsubscribe, name='unsubscribe'),
+    path('sample_email/', views.sample_email, name='sample_email'),
 ]

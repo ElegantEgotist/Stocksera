@@ -1,3 +1,4 @@
+// If there is an error, hide the page
 function display_data() {
     var error_msg_class = document.getElementById("error_msg").className;
     if (error_msg_class == "instructions error_true") {
@@ -6,6 +7,7 @@ function display_data() {
     }
 }
 
+// If price is positive, show green colour, else show red
 function update_price_color() {
     var tickers = document.getElementsByClassName("ticker_item");
     for (i=0; i<tickers.length; i++) {
@@ -18,10 +20,12 @@ function update_price_color() {
     }
 }
 
+// Highlight the nav bar if selected
 function highlight_selected_nav(elem) {
     document.getElementById(elem).classList.add("current_link")
 }
 
+// For smaller screen. Function to show/hide nav bar
 function top_right_nav(elem) {
     var nav_bar_div = document.getElementById("nav_bar_div");
     var dark_mode_btn = document.getElementById("dark_mode_btn");
@@ -34,39 +38,60 @@ function top_right_nav(elem) {
     }
     else {
         elem.classList.add("opened")
-        nav_bar_div.style.height = "280px";
+        nav_bar_div.style.height = "305px";
         nav_bar_div.style.width = "100%";
         nav_bar_div.querySelector("ul").style.display = "block"
         dark_mode_btn.style.display = "block"
     }
 }
 
+// Change to dark/light mode depending on toggle on nav bar
 function activate_dark_mode() {
     var iframe = document.getElementsByTagName("iframe");
     if (document.getElementById("dark_mode").checked == true) {
         document.getElementsByTagName("body")[0].classList.add("dark_mode");
         localStorage.setItem("mode", "dark");
-        if (iframe.length > 1) {
-            for (i=1; i<iframe.length; i++) {
-                if (typeof(iframe[i].contentDocument) != null) {
+        for (i=iframe.length-1; i>=0; i--) {
+            if (typeof(iframe[i].contentDocument) != null) {
+                try {
                     iframe[i].contentDocument.getElementsByTagName("body")[0].classList.add("dark_mode")
                 }
+                catch {
+                    console.log("error")
+                }
+
+            }
+        }
+        if (document.querySelector("#intro_images") != null) {
+            img = document.querySelector("#intro_images").querySelectorAll("img")
+            for (i=0; i<img.length; i++) {
+                img[i].src = img[i].src.replace("light", "dark")
             }
         }
     }
     else {
         document.getElementsByTagName("body")[0].classList.remove("dark_mode");
         localStorage.setItem("mode", "light");
-        if (iframe.length > 1) {
-            for (i=1; i<iframe.length; i++) {
-                if (typeof(iframe[i].contentDocument) != null) {
+        for (i=iframe.length-1; i>=0; i--) {
+            if (typeof(iframe[i].contentDocument) != null) {
+                try {
                     iframe[i].contentDocument.getElementsByTagName("body")[0].classList.remove("dark_mode")
                 }
+                catch {
+                    console.log("error")
+                }
+            }
+        }
+        if (document.querySelector("#intro_images") != null) {
+            img = document.querySelector("#intro_images").querySelectorAll("img")
+            for (i=0; i<img.length; i++) {
+                img[i].src = img[i].src.replace("dark", "light")
             }
         }
     }
 }
 
+// If dark mode is selected previously, show dark page when it is loaded
 function restore_dark_mode() {
     if (localStorage.getItem("mode") == "dark") {
         document.getElementsByTagName("body")[0].classList.add("dark_mode");
@@ -74,6 +99,7 @@ function restore_dark_mode() {
     }
 }
 
+// If ticker's company image is missing, show its symbol instead
 function load_error_img(elem, symbol) {
     if (symbol.length >= 5) {
         symbol_text = `<div style="font-size:inherit">${symbol}</div>`
@@ -85,6 +111,7 @@ function load_error_img(elem, symbol) {
     ${symbol_text}</div>` + document.getElementById("ticker_basic_stats").innerHTML
 }
 
+// If ticker's company image is missing, show its symbol instead
 function load_table_error_img(elem, symbol) {
     elem.parentElement.innerHTML = `<div class="no_img_table_div">
         <div class="no_img_table_img table_ticker_logo">
@@ -95,7 +122,7 @@ function load_table_error_img(elem, symbol) {
     elem.remove()
 }
 
-<!--Function to check that dictionary has a key-->
+// Check that dictionary has a key
 function check_stats(property) {
     if (information.hasOwnProperty(property) == true) {
         property_name = information[property]
@@ -106,6 +133,7 @@ function check_stats(property) {
     return property_name
 }
 
+// Check that property is a number and convert to locale string. else N/A
 function check_if_num(property) {
     property_name = information[property]
     if (typeof(property_name) == "number") {
@@ -117,6 +145,7 @@ function check_if_num(property) {
     return property_name
 }
 
+// Show basic stats of ticker (price, change, industry, sector)
 function show_ticker_price(information) {
     var latest_price = information["regularMarketPrice"];
     var mkt_close = information["previousClose"];
@@ -170,6 +199,7 @@ function show_ticker_price(information) {
     document.getElementById("ticker_basic_stats").innerHTML = ticker_basic_stats_code;
 }
 
+// Alter the graph range based on button selected
 function btn_selected(elem) {
     date_range = document.getElementsByName("date_range")
     for (i=0; i<date_range.length; i++) {
@@ -178,6 +208,7 @@ function btn_selected(elem) {
     elem.classList.add("selected")
 }
 
+// If -10% in price change, show SSR symbol
 function get_ssr(information) {
     low_price = information["regularMarketDayLow"]
     previous_close = information["previousClose"]
@@ -204,6 +235,7 @@ function get_ssr(information) {
     }
 }
 
+// If stock is not listed in US, hide graph and some other functionality
 function check_if_us_stock(symbol) {
     if (symbol.includes(".")) {
         if (document.getElementById("ticker_chart") != null) {
@@ -216,6 +248,7 @@ function check_if_us_stock(symbol) {
     }
 }
 
+// Get date difference between current time and duration
 function get_date_difference(duration, delimiter) {
     var d = new Date();
     d.setMonth(d.getMonth() - duration);
@@ -232,6 +265,7 @@ function get_date_difference(duration, delimiter) {
     return date_threshold
 }
 
+// Get next economic release date in economic sector
 function get_economic_releases(elem) {
     today_date = new Date()
     day = today_date.getDate()
@@ -287,18 +321,39 @@ function get_economic_releases(elem) {
     document.getElementById("releases_div").innerHTML += code
 }
 
-function remove_spinner() {
-    parent.document.querySelector(".loading").style.display = "none"
-}
-
+// Expand iframe to appropriate size when loaded
 function expand_iframe(elem) {
     height = elem.contentWindow.document.body.scrollHeight
     elem.style.height = height + 'px';
 }
 
-function clickAndDisable(link) {
-    // disable subsequent clicks
-    link.onclick = function(event) {
-        setTimeout(event.preventDefault(), 10000);
+function minimise_main_div() {
+    document.querySelector("body").classList.add("minimise_nav")
+}
+
+function maximise_main_div() {
+    document.querySelector("body").classList.remove("minimise_nav")
+}
+
+function activate_nav_bar() {
+    if (localStorage.getItem("nav_bar_type") == "full") {
+        localStorage.setItem("nav_bar_type", "partial");
+        minimise_main_div()
+        if (typeof(resize_plotly_graph) != "undefined") {
+            resize_plotly_graph()
+        }
+    }
+    else {
+        localStorage.setItem("nav_bar_type", "full");
+        maximise_main_div()
+        if (typeof(resize_plotly_graph) != "undefined") {
+            resize_plotly_graph()
+        }
+    }
+}
+
+function restore_nav_bar() {
+    if (localStorage.getItem("nav_bar_type") == "partial") {
+        minimise_main_div()
     }
 }

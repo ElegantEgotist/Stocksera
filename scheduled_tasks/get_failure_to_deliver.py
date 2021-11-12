@@ -25,7 +25,7 @@ def download_ftd():
     ftd_url_links = text_soup_high_short_interested_stocks.findAll("table")[1].findAll("a")
     for url_link in ftd_url_links[:24]:
         print(base_url + url_link["href"])
-        df = pd.read_csv(base_url + url_link["href"], delimiter="|", error_bad_lines=False)
+        df = pd.read_csv(base_url + url_link["href"], delimiter="|", error_bad_lines=False, encoding="cp1252")
         df.to_csv("database/failure_to_deliver/csv/" + url_link["href"].split("/")[-1].replace(".zip", ".csv"),
                   index=None)
 
@@ -111,9 +111,12 @@ def get_top_ftd(filename):
     combined_df.to_csv("database/failure_to_deliver/top_ftd.csv", index=False)
 
 
-if __name__ == '__main__':
+def main():
     download_ftd()
     FOLDER_PATH = r"database/failure_to_deliver/csv"
     combine_df(FOLDER_PATH)
     get_top_ftd(sorted(Path(FOLDER_PATH).iterdir(), key=os.path.getmtime)[0])
 
+
+if __name__ == '__main__':
+    main()

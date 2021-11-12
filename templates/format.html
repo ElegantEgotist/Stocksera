@@ -4,50 +4,27 @@
 
 <html lang="en">
 <head>
-    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
     <meta name="format-detection" content="telephone=no">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'style/format.css' %}">
+    <link rel="stylesheet" href="{% static 'style/nav_bar.css' %}">
+    <link rel="stylesheet" href="{% static 'style/footer.css' %}">
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="{% static 'javascript/format.js' %}"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J5Y69DW2CT"></script>
     <script>
-        function load_td_graph() {
-            var ticker = "{{ticker_selected}}".replace("-", "")
-            if (localStorage.getItem("mode") == "dark") {
-                var graph_mode = "dark";
-            }
-            else {
-                var graph_mode = "light"
-            }
-
-            new TradingView.widget(
-            {
-                "autosize": true,
-                "symbol": ticker,
-                "interval": "D",
-                "timezone": "Etc/UTC",
-                "theme": graph_mode,
-                "style": "1",
-                "locale": "en",
-                "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false,
-                "allow_symbol_change": true,
-                "studies": [
-                    "MASimple@tv-basicstudies",
-                    "MASimple@tv-basicstudies",
-                    "RSI@tv-basicstudies",
-                    "MACD@tv-basicstudies"
-                ],
-                "container_id": "ticker_chart"
-            }
-            );
-        }
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J5Y69DW2CT');
     </script>
     {% block additional_script %}{% endblock %}
 </head>
-
-<body onload="update_price_color();{% block onload_properties%}{% endblock %}">
-<script>restore_dark_mode()</script>
+<body onload="update_price_color();restore_dark_mode();{% block onload_properties%}{% endblock %}">
+<script>restore_nav_bar();restore_dark_mode();</script>
 <div>
     <div id="top_nav_bar">
         <div id="nav_bar_div_logo">
@@ -76,37 +53,50 @@
             <ul>
                 <a href="{% url 'main' %}">
                     <li id="home" class="nav_bar">
-                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/home.svg' %}">Home
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/home.svg' %}" style="display:none">
+                        <span>Home</span>
                     </li>
                 </a>
                 <a href="{% url 'ticker' %}">
                     <li id="stocks_analysis" class="nav_bar">
-                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/ticker_analysis.svg' %}">Stock
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/ticker_analysis.svg' %}" style="display:none">
+                        <span>Stock</span>
                     </li>
                 </a>
-                <a href="{% url 'reddit_analysis' %}">
+                <a href="{% url 'wsb_live' %}">
                     <li id="reddit" class="nav_bar">
-                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/reddit.svg' %}">Reddit
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/reddit.svg' %}" style="display:none">
+                        <span>Reddit</span>
                     </li>
                 </a>
                 <a href="{% url 'reverse_repo' %}">
                     <li id="economy" class="nav_bar">
-                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/economy.svg' %}">Economy
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/economy.svg' %}" style="display:none">
+                        <span>Economy</span>
                     </li>
                 </a>
-                <a href="{% url 'beta' %}">
-                    <li id="beta" class="nav_bar">
-                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/beta.svg' %}">Stocks Beta
+                <a href="{% url 'senate' %}">
+                    <li id="government" class="nav_bar">
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/government.png' %}" style="display:none">
+                        <span>Government</span>
                     </li>
                 </a>
-                <a href="{% url 'market_overview' %}">
+                <a href="{% url 'market_summary' %}">
+                    <li id="market_summary" class="nav_bar">
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/treemap.png' %}" style="display:none">
+                        <span>Market Summary</span>
+                    </li>
+                </a>
+                <a href="{% url 'latest_insider' %}">
                     <li id="discover" class="nav_bar">
-                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/discover.svg' %}">Discover
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/discover.svg' %}" style="display:none">
+                        <span>Discover</span>
                     </li>
                 </a>
                 <a href="{% url 'about' %}">
                     <li id="about" class="nav_bar">
-                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/about.svg' %}">About
+                        <img class="nav_bar_logo" src="{% static 'images/nav_bar/about.svg' %}" style="display:none">
+                        <span>About</span>
                     </li>
                 </a>
             </ul>
@@ -118,6 +108,9 @@
                     <input id="dark_mode" type="checkbox" onchange="activate_dark_mode();load_td_graph()">
                     <span class="slider round"></span>
                 </label>
+                <button id="resize_main_div_btn" onclick="activate_nav_bar()">
+                    <img src="{% static 'images/left_right_arrow.svg' %}" style="vertical-align: bottom; width: 20px;">
+                </button>
             </div>
         </div>
     </div>
@@ -126,18 +119,24 @@
         <div id="main_content">
             {% block main_content %}
             {% endblock %}
+            <div class="subscribe_email_div" style="padding: 15px 0 0px 0px; text-align: center;"><a class="subscribe_email" href="/subscribe" target="_blank">Subscribe to Free WSB Notifications</a></div>
             <div class="donate_sticky" id="donate_sticky">Support</div>
         </div>
 
         <div class="footer">
-                <ul>
-                    <li id="disclaimer">Disclaimer</li>
-                    <li id="contact">Contact</li>
-                    <li id="privacy">Privacy</li>
-                    <li id="support">Support</li>
-                    <li id="share">Share</li>
-                </ul>
-                <div>&copy; 2021 Stocksera</div>
+            <ul>
+                <li id="disclaimer">Disclaimer</li>
+                <li id="privacy">Privacy</li>
+                <li id="support">Support</li>
+                <li id="advertisement" style="display: none">Advertise</li>
+            </ul>
+            <div class="footer_share">
+                <a href="https://twitter.com/stocksera_bot" target="_blank"><img src="{% static 'images/footer/twitter.png' %}"></a>
+                <a href="https://reddit.com/r/stocksera" target="_blank"><img src="{% static 'images/footer/reddit.png' %}"></a>
+                <a href="https://github.com/spartan737/Stocksera" target="_blank"><img src="{% static 'images/footer/github.png' %}" style="background: white"></a>
+                <a href="mailto:stocksera@gmail.com" target="_blank"><img src="{% static 'images/footer/email.png' %}"></a>
+            </div>
+            <div>&copy; 2021 Stocksera</div>
         </div>
 
             <div id="disclaimer_model" class="modal">
@@ -155,18 +154,6 @@
                             Do note that the price of tickers are delayed. You should depend on your broker for latest
                             price changes instead.
                         </p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="contact_model" class="modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <span class="close">&times;</span>
-                        <h4>Contact</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>If you have any questions or suggestions regarding Stockera, please drop me a message in the <a href="{% url 'about' %}" target="_blank">About</a> section or email me at stocksera@gmail.com</p>
                     </div>
                 </div>
             </div>
@@ -203,23 +190,37 @@
                 </div>
             </div>
 
-            <div id="share_model" class="modal">
+            <div id="advertisement_model" class="modal">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <span class="close">&times;</span>
-                    <h4>Share</h4>
+                    <h4>WSB Live & Pre-Market Notifications</h4>
                 </div>
                 <div class="modal-body">
-                    <div style="margin-top: 25px">
-                        <div class="a2a_kit a2a_kit_size_32 a2a_default_style" data-a2a-url="https://stocksera.pythonanywhere.com/" data-a2a-title="StocksEra">
-                        <a class="a2a_button_whatsapp"></a>
-                        <a class="a2a_button_telegram"></a>
-                        <a class="a2a_button_facebook"></a>
-                        <a class="a2a_button_twitter"></a>
-                        <a class="a2a_button_reddit"></a>
+                    <p style="font-size: larger; font-weight: bold">
+                        WSB Live Sentiment is now available! Have you subscribe to our FREE pre-market notifications?
+                    </p>
+                    <div class="buttons_div">
+                        <div>
+                            <a href="/wsb_live" target="_blank">
+                                Live Sentiment
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/subscribe" target="_blank">
+                                Subscribe Now
+                            </a>
+                        </div>
+                        <div>
+                            <span class="adv_close">Next Time</span>
+                        </div>
                     </div>
-                    </div>
-                    <script async src="https://static.addtoany.com/menu/page.js"></script>
+                    <img src="{% static 'images/advertisements/mentions.png' %}">
+                    <br><br><br>
+                    <img src="{% static 'images/advertisements/change.png' %}">
+                    <br><br><br>
+                    <img src="{% static 'images/advertisements/price_change.png' %}">
+                    <br><br><br>
+                    <img src="{% static 'images/advertisements/ticker.png' %}">
                 </div>
                 </div>
             </div>
@@ -228,6 +229,24 @@
 </div>
 </body>
 <script src="{% static 'javascript/load_footer.js' %}"></script>
-{% block bottom_script %}
-{% endblock %}
+<script>
+    if (localStorage.getItem("advertisement") == null) {
+        show_msg_time = new Date().getTime() + (30000000);
+        localStorage.setItem("advertisement", show_msg_time);
+    }
+    else {
+        if (new Date().getTime() > localStorage.getItem("advertisement")) {
+            setTimeout(function() {
+                localStorage.setItem("advertisement", "N/A");
+                document.querySelector("#advertisement").click();
+            }, 3000);
+        }
+    }
+</script>
+{% block bottom_script %} {% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src='https://cdn.plot.ly/plotly-2.3.1.min.js'></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
 </html>
