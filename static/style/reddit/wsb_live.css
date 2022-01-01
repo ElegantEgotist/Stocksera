@@ -24,6 +24,15 @@
         padding: 7px;
         min-width: 40px;
     }
+
+    .main_trending_graph_div {
+        display: flex;
+        justify-content: middle;
+    }
+
+    .main_trending_graph_div div {
+        width: 100%;
+    }
 }
 
 .chart {
@@ -113,4 +122,26 @@ h2 {
 
 #expand_banned_words:hover {
     cursor: pointer;
+}
+
+.date_selector button {
+    border: 0px;
+    border-bottom: 2px solid #858585;
+    color: #858585;
+    padding: 0 2px 0 2px;
+    margin: 0 5px 0 5px
+}
+
+.selected {
+    border-bottom: 2px solid rgb(38, 166, 154) !important;
+    color: rgb(38, 166, 154) !important;
+}
+
+.dark_mode .date_selector button {
+    background-color: transparent;
+}
+
+.dark_mode .selected {
+    border-bottom: 2px solid rgb(38, 166, 154) !important;
+    color: rgb(38, 166, 154) !important;
 }

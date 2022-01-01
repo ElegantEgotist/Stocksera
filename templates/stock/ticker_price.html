@@ -72,6 +72,7 @@
             <div class="more_info_div"><a class="more_info_btn" href="{% url 'options' %}?quote={{ticker_selected}}">Options</a></div>
             <div class="more_info_div"><a class="more_info_btn" href="{% url 'short_volume' %}?quote={{ticker_selected}}">Short Vol</a></div>
             <div class="more_info_div"><a class="more_info_btn" href="{% url 'failure_to_deliver' %}?quote={{ticker_selected}}">FTD</a></div>
+            <div class="more_info_div"><a class="more_info_btn" href="{% url 'wsb_live_ticker' %}?quote={{ticker_selected}}">WSB Live</a></div>
         </div>
     </div>
 
@@ -182,11 +183,18 @@
                         </div>
 
                         <div class="btn_div">
-                        <form action="/discussion" method="GET" autocomplete="off" target="Discussion">
-                            <input style="display: none" name="quote" value="{{ticker_selected}}">
-                            <button type="button" class="show_more_btn" onclick="submit();to_remove(this, 'Discussion');">Discussion</button>
-                        </form>
-                    </div>
+                            <form action="/tradingview" method="GET" autocomplete="off" target="Trading View">
+                                <input style="display: none" name="quote" value="{{ticker_selected}}">
+                                <button type="button" class="show_more_btn" onclick="submit();to_remove(this, 'Trading View');">Trading View</button>
+                            </form>
+                        </div>
+
+                        <div class="btn_div">
+                            <form action="/discussion" method="GET" autocomplete="off" target="Discussion">
+                                <input style="display: none" name="quote" value="{{ticker_selected}}">
+                                <button type="button" class="show_more_btn" onclick="submit();to_remove(this, 'Discussion');">Discussion</button>
+                            </form>
+                        </div>
                     </div>
                     <button id="slideRight" type="button" class="scroll_horizontal_btn">
                         <img src="{% static 'images/right_arrow.svg' %}">
@@ -204,8 +212,8 @@
                 <iframe src="/loading/" style="display: none" class="more_details" name="Google Trends" scrolling="no" onload="expand_iframe(this)"></iframe>
                 <iframe src="/loading/" style="display: none" class="more_details" name="News Sentiment" scrolling="no" onload="expand_iframe(this)"></iframe>
                 <iframe src="/loading/" style="display: none" class="more_details" name="Insider Trading" id="insider_trading" scrolling="no" onload="expand_iframe(this)"></iframe>
+                <iframe src="/loading/" style="display: none" class="more_details" name="Trading View" scrolling="no" onload="expand_iframe(this)"></iframe>
                 <iframe src="/loading/" style="display: none" class="more_details" name="Discussion" scrolling="no" onload="expand_iframe(this)"></iframe>
-
                 <div style="margin-top: 30px">
                     <p><b>Related tickers that you might be interested:</b></p>
                     {% for i in related_tickers %}

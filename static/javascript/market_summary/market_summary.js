@@ -33,7 +33,7 @@ layout_dict = {
         },
     }
 
-function load_stock_chart(title) {
+function load_indices_chart(title) {
     parent_list = [""], mkt_cap_list = [""], change_list = [""], ticker_list = [title]
 
     tr = document.getElementsByTagName("table")[1].querySelectorAll("tr")
@@ -90,22 +90,23 @@ function load_stock_chart(title) {
 }
 
 function load_crypto_chart() {
+    symbol_list = [], parent_list = [], market_cap_list = [], color_list = [], custom_data_list = []
     var url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false`;
     fetch(url)
     .then(res => res.json())
     .then((out) => {
-        symbol_list = [], parent_list = [], market_cap_list = [], color_list = [], custom_data_list = []
         for (i in out) {
             i = out[i]
             symbol = i["symbol"].toUpperCase()
             market_cap = i["market_cap"] / 1000000000
             current_price = i["current_price"]
+            volume = i["total_volume"]
             price_change_percentage_24h = i["price_change_percentage_24h"]
             parent_list.push("Top 100 Crypto by Market Cap")
             symbol_list.push(symbol)
             market_cap_list.push(market_cap)
             color_list.push(price_change_percentage_24h)
-            custom_data_list.push([current_price, price_change_percentage_24h, Number(market_cap).toLocaleString()])
+            custom_data_list.push([current_price, price_change_percentage_24h, Number(market_cap).toLocaleString(), volume.toLocaleString()])
         }
 
         var data = [{
@@ -114,7 +115,7 @@ function load_crypto_chart() {
             labels: symbol_list,
             parents: parent_list,
             customdata: custom_data_list,
-            hovertemplate: "<b>%{label}</b><br>Price: $%{customdata[0]}<br>Price Change: %{customdata[1]:.2f}%<br>Market Cap: %{customdata[2]}B<extra></extra>",
+            hovertemplate: "<b>%{label}</b><br>Price: $%{customdata[0]}<br>Price Change: %{customdata[1]:.2f}%<br>Market Cap: %{customdata[2]}B<br>24H Vol: $%{customdata[3]}<extra></extra>",
             textposition: "center",
             texttemplate: "<b>%{label}</b><br>%{customdata[1]:.2f}%",
             showscale: false,
@@ -134,16 +135,58 @@ function load_crypto_chart() {
             gd.on("plotly_treemapclick", () => false)
         })
     })
-    .catch(err => { throw err });
+    .catch(err => { throw err })
+}
+
+function load_wsb_chart() {
+    symbol_list = [], parent_list = [], color_list = [], custom_data_list = [], mentions_list = []
+    document.querySelector("#show_trading_view_graph").style.display = "none"
+    tr = document.getElementsByTagName("table")[0].querySelectorAll("tr")
+    for (i=1; i<tr.length; i++) {
+        td = tr[i].querySelectorAll("td")
+        parent_list.push("WSB Trending")
+        symbol_list.push(td[0].innerHTML.replace(/&amp;/g, '&'))
+        mentions_list.push(td[1].innerHTML)
+        color_list.push(td[3].innerHTML)
+        custom_data_list.push([td[3].innerHTML, Number(td[2].innerHTML).toLocaleString(), td[1].innerHTML])
+    }
+    var data = [{
+        type: 'treemap',
+        values: mentions_list,
+        labels: symbol_list,
+        parents: parent_list,
+        customdata: custom_data_list,
+        showscale: false,
+        marker: {
+            cmin: -3,
+            cmax: 3,
+            cmid: 0,
+            colorscale: colorscale_list,
+            colors: color_list,
+        },
+        hovertemplate: "<b>%{label}</b><br>Mentions: %{customdata[2]}<br>Price Change: %{customdata[0]}%<br>Market Cap: $%{customdata[1]}<br><extra></extra>",
+        textposition: "center",
+        texttemplate: "<b>%{label}</b><br>%{customdata[0]}%",
+    }]
+
+    var layout = layout_dict
+    Plotly.newPlot('heatmap_chart', data, layout, {displayModeBar: false, showTips: false, responsive: true})
+        .then(gd => {
+            gd.on("plotly_treemapclick", () => false)
+        })
 }
 
 function load_heatmap(title) {
     if (title.includes("Crypto")) {
         load_crypto_chart()
     }
-    else {
-        load_stock_chart(title)
+    else if (title.includes("Wallstreetbets")) {
+        load_wsb_chart()
     }
+    else {
+        load_indices_chart(title)
+    }
+    document.getElementById(title).classList.add("current_link")
 }
 
 function show_ticker_chart(elem) {

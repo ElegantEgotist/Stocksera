@@ -89,6 +89,8 @@ def database():
                "ticker TEXT, "
                "mkt_cap TEXT, "
                "price_change FLOAT, "
+               "industry TEXT, "
+               "sector TEXT, "
                "difference_sma FLOAT, "
                "difference_52w_high FLOAT, "
                "difference_52w_low FLOAT, "
@@ -131,9 +133,10 @@ def database():
     db.execute("CREATE table IF NOT EXISTS earnings_calendar ("
                "name TEXT, "
                "symbol TEXT, "
-               "mkt_cap TEXT, "
+               "mkt_cap INTEGER, "
                "eps_est TEXT, "
                "eps_act TEXT, "
+               "surprise TEXT, "
                "earning_date TEXT, "
                "earning_time TEXT, "
                "UNIQUE(name, symbol) )")
@@ -152,6 +155,12 @@ def database():
     db.execute("CREATE table IF NOT EXISTS twitter_followers ("
                "ticker TEXT, "
                "followers INTEGER, "
+               "updated_date TEXT,"
+               "UNIQUE('ticker', 'updated_date' ))")
+
+    db.execute("CREATE table IF NOT EXISTS twitter_trending ("
+               "ticker TEXT, "
+               "tweet_count INTEGER, "
                "updated_date TEXT,"
                "UNIQUE('ticker', 'updated_date' ))")
 
@@ -195,6 +204,11 @@ def database():
                "value FLOAT, "
                "percent_change FLOAT, "
                "covid_monthly_avg INTEGER, "
+               "UNIQUE ('record_date') )")
+
+    db.execute("CREATE table IF NOT EXISTS initial_jobless_claims (record_date TEXT, "
+               "value INTEGER, "
+               "percent_change FLOAT, "
                "UNIQUE ('record_date') )")
 
     db.execute("CREATE table IF NOT EXISTS inflation ("
@@ -272,6 +286,7 @@ def database():
 
     db.execute("CREATE table IF NOT EXISTS stocktwits_trending ("
                "rank INTEGER, "
+               "watchlist INTEGER, "
                "symbol TEXT, "
                "date_updated TEXT )")
 

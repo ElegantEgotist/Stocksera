@@ -82,6 +82,7 @@ def get_earnings(n_days=7, forward=True):
                                                             "surprise", "earning_date", "earning_time"])
     mkt_cap_df = fast_yahoo.download_quick_stats(earnings_df["Symbol"].to_list(), {'marketCap': 'mkt_cap'})
     mkt_cap_df.reset_index(inplace=True)
+    mkt_cap_df.replace("N/A", 0, inplace=True)
     results_df = pd.merge(earnings_df, mkt_cap_df, on="Symbol")
     return results_df
 
@@ -134,25 +135,20 @@ def update_previous_earnings(earnings_df):
     print("Updated previous earnings successfully")
 
 
-def delete_old_earnings(last_date):
+def delete_old_earnings(n_days_ago):
     """
     Remove old earnings till last_date
     Parameters
     ----------
-    last_date: str
-        Date format: YYYY-MM-DD
+    n_days_ago: int
+        Keep earnings from n_days_ago till now
     """
-    db.execute("SELECT DISTINCT earning_date FROM earnings_calendar")
-    all_dates = db.fetchall()
-    for date in sorted(all_dates):
-        if date[0] == last_date:
-            print("All earnings date till {} removed from database.".format(last_date))
-            break
-        db.execute("DELETE FROM earnings_calendar WHERE earning_date=?", (date[0],))
-        conn.commit()
+    date_to_remove = str(datetime.utcnow().date() - timedelta(days=n_days_ago))
+    db.execute("DELETE FROM earnings_calendar WHERE earning_date<=?", (date_to_remove,))
+    conn.commit()
 
 
 if __name__ == '__main__':
-    insert_earnings_into_db(get_earnings(1, forward=True))
+    insert_earnings_into_db(get_earnings(7, forward=True))
     update_previous_earnings(get_earnings(7, forward=False))
-    delete_old_earnings("2021-10-01")
+    delete_old_earnings(14)
