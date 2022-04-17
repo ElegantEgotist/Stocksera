@@ -85,18 +85,10 @@ table, th {
     text-align: center !important;
 }
 
-tr td:nth-child(3) {
-    background-color: #E9EAEA;
+tr, td, tr:last-child td {
+    border: 2px solid #EAE9E9;
 }
 
-.dark_mode tr td:nth-child(3) {
-    background-color: #505050;
-}
-
-.itm {
-    background-color: #E9EAEA;
-}
-
-.dark_mode .itm {
-    background-color: #505050;
+.dark_mode tr, .dark_mode td, .dark_mode tr:last-child td {
+    border: 1px solid #636363;
 }

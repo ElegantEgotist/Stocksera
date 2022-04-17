@@ -1,10 +1,13 @@
+import os
 import re
+import sys
 import yaml
 import praw
 import math
-import sqlite3
 import requests
 import pandas as pd
+import mysql.connector
+from sqlalchemy import create_engine
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
@@ -17,6 +20,13 @@ from scheduled_tasks.reddit.stocks.fast_yahoo import *
 from custom_extensions.custom_words import new_words
 from custom_extensions.stopwords import stopwords_list
 
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
+from helpers import connect_mysql_database
+
+cnx, engine = connect_mysql_database()
+cur = cnx.cursor()
+
+
 with open("config.yaml") as config_file:
     config_keys = yaml.load(config_file, Loader=yaml.Loader)
 
@@ -26,9 +36,6 @@ analyzer.lexicon.update(new_words)
 reddit = praw.Reddit(client_id=config_keys["API_REDDIT_CLIENT_ID"],
                      client_secret=config_keys["API_REDDIT_CLIENT_SECRET"],
                      user_agent=config_keys["API_REDDIT_USER_AGENT"])
-
-conn = sqlite3.connect(r"database/database.db", check_same_thread=False)
-db = conn.cursor()
 
 pattern = "(?<=\$)?\\b[A-Z]{1,5}\\b(?:\.[A-Z]{1,2})?"
 
@@ -43,8 +50,10 @@ def round_time(time_string, base=5):
     base: int
         round to the nearest base
     """
-    rounded = str(base * round(int(time_string)/base))
-    if len(rounded) == 1:
+    rounded = str(base * round(int(time_string) / base))
+    if rounded == "60":
+        rounded = "55"
+    elif len(rounded) == 1:
         rounded = "0" + rounded
     return rounded
 
@@ -58,7 +67,7 @@ def words_to_remove():
                             "GUYS", "PEOPLE", "ALREADY", "IMGEMOTET_TH", "BANBET", "VISUALMOD", "TODAY", "LOOKS",
                             "MADE", "YESTERDAY", "TOMORROW", "TMR", "EDT", "KEEP", "ANYONE", "GOES", "PLEASE", "BET",
                             "BAN", "AROUND", "ANYONE", "ACTUALLY", "SEEN", "ALSO", "RIGHT", "THERES", "MAY", "MIGHT",
-                            "DAY", "MAKING", "AWAY", "KIND"]
+                            "DAY", "MAKING", "AWAY", "KIND", "COM", "EOD", "MUST", "RYAN", "JOE", "FILL", "EM"]
     return basic_stopwords_list
 
 

@@ -38,8 +38,8 @@ function top_right_nav(elem) {
     }
     else {
         elem.classList.add("opened")
-        nav_bar_div.style.height = "305px";
-        nav_bar_div.style.width = "100%";
+        nav_bar_div.style.height = "100%";
+        nav_bar_div.style.width = "200px";
         nav_bar_div.querySelector("ul").style.display = "block"
         dark_mode_btn.style.display = "block"
     }
@@ -62,12 +62,6 @@ function activate_dark_mode() {
 
             }
         }
-        if (document.querySelector("#intro_images") != null) {
-            img = document.querySelector("#intro_images").querySelectorAll("img")
-            for (i=0; i<img.length; i++) {
-                img[i].src = img[i].src.replace("light", "dark")
-            }
-        }
     }
     else {
         document.getElementsByTagName("body")[0].classList.remove("dark_mode");
@@ -80,12 +74,6 @@ function activate_dark_mode() {
                 catch {
                     console.log("error")
                 }
-            }
-        }
-        if (document.querySelector("#intro_images") != null) {
-            img = document.querySelector("#intro_images").querySelectorAll("img")
-            for (i=0; i<img.length; i++) {
-                img[i].src = img[i].src.replace("dark", "light")
             }
         }
     }
@@ -298,10 +286,10 @@ function get_economic_releases(elem) {
         treasury_code = `<div>Treasury: ${treasury_json} </div>`
     }
     if (inflation_json == today_date) {
-        inflation_code = `<div style="color:red">Inflation: ${inflation_json} (Pre)</div>`
+        inflation_code = `<div style="color:red">CPI: ${inflation_json} (Pre)</div>`
     }
     else {
-        inflation_code = `<div>Inflation: ${inflation_json} (Pre)</div>`
+        inflation_code = `<div>CPI: ${inflation_json} (Pre)</div>`
     }
     if (retail_sales_json == today_date) {
         retail_sales_code = `<div style="color:red">Retail Sales: ${retail_sales_json} (Pre)</div>`
@@ -338,10 +326,18 @@ function expand_iframe(elem) {
 
 function minimise_main_div() {
     document.querySelector("body").classList.add("minimise_nav")
+    dropdown_container = document.querySelectorAll(".dropdown-container")
+    for (i=0; i<dropdown_container.length; i++) {
+        dropdown_container[i].classList.add("hide_nav_dropdown")
+    }
 }
 
 function maximise_main_div() {
     document.querySelector("body").classList.remove("minimise_nav")
+    dropdown_container = document.querySelectorAll(".dropdown-container")
+    for (i=0; i<dropdown_container.length; i++) {
+        dropdown_container[i].classList.remove("hide_nav_dropdown")
+    }
 }
 
 function activate_nav_bar() {
@@ -366,3 +362,45 @@ function restore_nav_bar() {
         minimise_main_div()
     }
 }
+
+function expand_nav() {
+    if (document.querySelector("body").classList.contains("minimise_nav")) {
+        maximise_main_div()
+    }
+}
+
+function get_tickers_suggestion(elem) {
+    fetch(`https://www.stockgrid.io/search_tickers?fragment=${elem.value.toUpperCase()}`)
+        .then(response => response.text())
+        .then((result) => {
+            result = JSON.parse(result)["tickers"]
+            code = ""
+            for (i in result) {
+                code += `<div onclick="document.querySelector('#quote').value='${result[i][0]}';form.submit();this.disabled=true;">${result[i][0]} - ${result[i][1]}</div>`
+            }
+            document.getElementById("ticker_suggestions").innerHTML = code
+            if (code == "") {
+                document.getElementById("ticker_suggestions").style.display = "none"
+            }
+            else {
+                document.getElementById("ticker_suggestions").style.display = ""
+            }
+        })
+        .catch(error => console.log('error', error));
+}
+
+//window.onclick = function(event) {
+//    console.log("window clicked")
+//    if (document.getElementById("ticker_suggestions") != null) {
+//        document.getElementById("ticker_suggestions").style.display = "none";
+//    }
+//
+//    nav_bar_div = document.getElementById("nav_bar_div")
+//    console.log(event.target, document.getElementById("hamburger_icon").classList)
+//    console.log(nav_bar_div.style.width)
+//    if (event.target != nav_bar_div && nav_bar_div.style.width != "200px" && document.getElementById("hamburger_icon").classList.contains("opened")) { //document.getElementById("hamburger_icon").classList.contains("opened")
+//        document.getElementById("nav_bar_div").style.width = "0px"
+//        document.getElementById("nav_bar_div").style.height = "0px"
+//console.log("yesy")
+//    }
+//}

@@ -1,4 +1,4 @@
-# StocksEra Developers Guide
+# Stocksera Developers Guide
 
 <b>You should run all commands from the main parent directory</b>
 ```
@@ -16,11 +16,15 @@ Before continuing, register for an API in the links shown below and add them in 
 | Reddit         | https://www.reddit.com/prefs/apps                   |
 | Twitter        | https://developer.twitter.com/en/portal/dashboard   |
 | Finnhub        | https://finnhub.io/                                 |
+| Polygon        | https://polygon.io/                                 |
 | Gmail -optional| https://realpython.com/python-send-email/           |
 
-You can view a sample of the database in <a href="https://drive.google.com/drive/folders/1qR7ssxnNzOUuvYCWR-kEajyoRoGKjbcT?usp=sharing">this</a> Google Drive link.
-- Transfer graph_chart folder to static directory.
-- Transfer database folder to the main parent directory.
+To access stock options data, sign up for TD Ameritrade Developer Account and follow the instructions in: 
+- https://www.reddit.com/r/algotrading/comments/c81vzq/td_ameritrade_api_access_2019_guide/
+- https://developer.tdameritrade.com/content/simple-auth-local-apps
+- Add your Client ID and Access Token in tdameritrade_config.yaml
+- Ignore the refresh token for now as it will be generated automatically if your Client ID and Access Token are correct.
+- NOTE: The Access Token expires every 90 days. So, remember to update it from time to time.
 
 ### NOTE: FOR FREQUENCY TO RUN THE SCRIPTS, SCROLL DOWN TO THE BOTTOM.
 
@@ -69,43 +73,58 @@ You can view a sample of the database in <a href="https://drive.google.com/drive
 #### scheduled_tasks/economy/get_upcoming_events_date.py
 - Get next release date for inflation, retail sales, RRP, daily treasury.
 
-#### scheduled_tasks/get_stocktwits_trending.py
-- Get popular tickers in Stocktwits.
-
-#### scheduled_tasks/get_popular_tickers.py
-- To add a new ticker, add it to list_of_tickers list in full_ticker_list().
-
-#### scheduled_tasks/get_ticker_info.py
-- Get ticker information to cache data in order to speed up rendering time.
-
-#### scheduled_tasks/get_short_volume.py
-- Get short volume of ticker.
-
-#### scheduled_tasks/get_latest_insider_trading.py
-- Get latest insider trading from Finviz.
-
-#### scheduled_tasks/get_senate_trading.py     
-- Get recent senate trading.
-
-#### scheduled_tasks/get_financial.py
-- Get financial data for companies.
-
-#### scheduled_tasks/miscellaneous.py
-- Get stocks with low float and high short interest.
-
-#### scheduled_tasks/get_earnings_calendar.py
-- Get upcoming earnings calendar
-
-#### scheduled_tasks/get_failure_to_deliver.py
+#### scheduled_tasks/stocks/get_failure_to_deliver.py
 - Get Failure to Deliver data from SEC
 
-#### scheduled_tasks/get_stocks_summary.py 
+#### scheduled_tasks/stocks/get_short_volume.py
+- Get short volume of ticker.
+
+#### scheduled_tasks/stocks/get_financial.py
+- Get financial data for companies.
+
+#### scheduled_tasks/stocks/get_borrowed_shares.py
+- Get number of borrowed shares available and the borrow fee of a stock
+
+#### scheduled_tasks/discover/get_stocktwits_trending.py
+- Get popular tickers in Stocktwits.
+
+#### scheduled_tasks/discover/get_latest_insider_trading.py
+- Get latest insider trading from Finviz.
+
+#### scheduled_tasks/discover/miscellaneous.py
+- Get stocks with low float and high short interest.
+
+#### scheduled_tasks/discover/get_earnings.py
+- Get upcoming earnings calendar
+
+#### scheduled_tasks/discover/get_stocks_summary.py 
 - Get heatmap of S&P 500, DOW and Nasdaq 100.
 
-#### scheduled_tasks/reset_options_cache.py
-- Remove updated dates in database/yf_cached_options.json
+#### scheduled_tasks/discover/get_stock_splits.py 
+- Get stocks with recent/upcoming stock splits.
 
-#### scheduled_tasks/reset_stocksera_trending.py
+#### scheduled_tasks/discover/get_dividends.py 
+- Get stocks with recent/upcoming dividends.
+
+#### scheduled_tasks/government/get_senate_trading.py     
+- Get recent senate trading.
+
+#### scheduled_tasks/government/get_house_trading.py     
+- Get recent house trading.
+
+#### scheduled_tasks/news/get_news.py     
+- Get breaking, crypto, forex and merger news.
+
+#### scheduled_tasks/others/get_popular_tickers.py
+- To add a new ticker, add it to list_of_tickers list in full_ticker_list().
+
+#### scheduled_tasks/others/get_ticker_info.py
+- Get ticker information to cache data in order to speed up rendering time.
+
+#### scheduled_tasks/others/get_tdameritrade_access_token.py
+- Get access token from TD Ameritrade. Expires every 30mins.
+
+#### scheduled_tasks/reset/reset_stocksera_trending.py
 - Reset Stocksera trending table in database.
 
 ## Frequency to run tasks
@@ -129,13 +148,19 @@ You can view a sample of the database in <a href="https://drive.google.com/drive
 | scheduled_tasks/economy/get_retail_sales.py                                           | retail_sales()                          | Monthly     |
 | scheduled_tasks/economy/get_initial_jobless_claims.py                                 | jobless_claims()                        | Weekly      |
 | scheduled_tasks/economy/get_upcoming_events_date.py                                   | main()                                  | 6.00PM      |
-| scheduled_tasks/miscellaneous.py                                                      | main()                                  | Daily (AH)  |
-| scheduled_tasks/get_earnings_calendar.py                                              | main()                                  | Daily (AH)  |
-| scheduled_tasks/get_failure_to_deliver.py                                             | main()                                  | 2 Weeks     |
-| scheduled_tasks/get_latest_insider_trading.py                                         | main()                                  | 2 Hours     |
-| scheduled_tasks/get_short_volume.py                                                   | main()                                  | 6.00PM      | 
-| scheduled_tasks/get_stocks_summary.py                                                 | main()                                  | 10 Mins     |
-| scheduled_tasks/get_stocktwits_summary.py                                             | main()                                  | Hourly      |
-| scheduled_tasks/get_senate_trading.py                                                 | main()                                  | Daily (AH)  |
-| scheduled_tasks/reset_options_cache.py                                                | reset_options()                         | Daily (AH)  |
-| scheduled_tasks/reset_stocksera_trending.py                                           | reset_trending_db()                     | 30 Mins     |
+| scheduled_tasks/stocks/get_failure_to_deliver.py                                      | main()                                  | 2 Weeks     |
+| scheduled_tasks/stocks/get_short_volume.py                                            | main()                                  | 6.00PM      | 
+| scheduled_tasks/stocks/get_borrowed_shares.py                                         | main()                                  | 10 Mins     |
+| scheduled_tasks/discover/miscellaneous.py                                             | main()                                  | Daily (AH)  |
+| scheduled_tasks/discover/get_earnings.py                                              | main()                                  | Daily (AH)  |
+| scheduled_tasks/discover/get_latest_insider_trading.py                                | main()                                  | 2 Hours     |
+| scheduled_tasks/discover/get_stocks_summary.py                                        | main()                                  | 10 Mins     |
+| scheduled_tasks/discover/get_stocktwits_summary.py                                    | main()                                  | Hourly      |
+| scheduled_tasks/discover/get_ipo_calendar.py                                          | main()                                  | Daily (AH)  |
+| scheduled_tasks/discover/get_stock_splits.py                                          | main()                                  | Daily (AH)  |
+| scheduled_tasks/discover/get_dividends.py                                             | main()                                  | Daily (AH)  |
+| scheduled_tasks/government/get_senate_trading.py                                      | main()                                  | Daily (AH)  |
+| scheduled_tasks/government/get_house_trading.py                                       | main()                                  | Daily (AH)  |
+| scheduled_tasks/news/get_news.py                                                      | main()                                  | 10 Mins     |
+| scheduled_tasks/reset/reset_stocksera_trending.py                                     | reset_trending_db()                     | 30 Mins     |
+| scheduled_tasks/others/get_tdameritrade_access_token.py                               | get_access_token()                      | 30 Mins     |

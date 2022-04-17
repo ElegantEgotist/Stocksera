@@ -1,6 +1,10 @@
-# StocksEra
+# Stocksera
 
-![Stocksera](./static/images/logo.png)
+![Stocksera](./static/images/github/logo.png)
+
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/stocksera_bot.svg?style=social&label=Follow%20%40stocksera_bot)](https://twitter.com/stocksera_bot)
+
+<b>NEW RELEASE: Stocksera API now available at https://pypi.org/project/stocksera or via `pip install stocksera`. View documentation at https://github.com/guanquann/Stocksera-API. </b>
 
 You can view the application in <a href="https://stocksera.pythonanywhere.com" target="_blank">stocksera.pythonanywhere.com</a>.
 
@@ -47,9 +51,9 @@ This website is free for everyone. But if you want to support me, please give me
 
 
 #### /ticker/options/
-- View options chain of your favourite ticker. Inspired from <a href="https://github.com/GamestonkTerminal/GamestonkTerminal/tree/main/gamestonk_terminal">Gamestonk Terminal</a>.
+- View options chain of your favourite ticker.
 - Find out the max-pain price, OTM & ITM options and Call/Put ratio of the next few weeks.
-- Data is from <a href="https://finance.yahoo.com/">yahoo finance</a>.
+- Data is from <a href="https://developer.tdameritrade.com/apis/">TD Ameritrade</a>.
 ![Options](./static/images/github/options.png)
 ![Option Chain](./static/images/github/options_chain.png)
 
@@ -59,9 +63,14 @@ This website is free for everyone. But if you want to support me, please give me
 ![Short Volume](./static/images/github/short_volume.png)
 
 #### /ticker/failure_to_deliver/
-- View failure to deliver data of some of the popular tickers.
+- View failure to deliver data of tickers.
 - Data is from <a href="https://www.sec.gov/data/foiadocsfailsdatahtm">SEC.gov</a>.
 ![Failure to Deliver](./static/images/github/ftd.png)
+
+#### /ticker/borrowed_shares/
+- View number of borrowed shares available and the borrow fee.
+- Data is from <a href="https://www.interactivebrokers.com/">IBKR</a>.
+![Borrowed Shares](./static/images/github/borrowed_shares.png)
 
 #### /wsb_live_ticker/
 - View number of mentions in WSB, calls/puts mentions and sentiment over time.
@@ -106,7 +115,6 @@ This website is free for everyone. But if you want to support me, please give me
 
 #### /market_summary/
 - Overview of the performance of S&P500, Nasdaq100, DIA & WSB.
-- Data is from <a href="https://tradingview.com/">Trading View</a>.
 ![Market Overview](./static/images/github/market_summary.png)
 
 #### /futures/
@@ -120,11 +128,25 @@ This website is free for everyone. But if you want to support me, please give me
 - Data is from <a href="https://finance.yahoo.com/">yahoo finance</a>.
 ![Earnings Calendar](./static/images/github/earnings_calendar.png)
 
+#### /ipo_calendar/
+- View upcoming and past IPOs
+![IPO](./static/images/github/ipo.png)
+
+#### /stocktwits/
+- View stocktwits trending tickers over time
+![Stocktwits Trending](./static/images/github/stocktwits_trending.png)
+
 #### /senate/
 - View recent senate trading
 ![Senate](./static/images/github/senate_trading.png)
 ![Senate](./static/images/github/senate_trading1.png)
 ![Senate](./static/images/github/senate_trading2.png)
+
+#### /house/
+- View recent house trading
+![House](./static/images/github/house_trading.png)
+![House](./static/images/github/house_trading1.png)
+![House](./static/images/github/house_trading2.png)
 
 #### /short_interest/
 - Identify tickers with the highest short interest level.
@@ -154,7 +176,7 @@ This website is free for everyone. But if you want to support me, please give me
 ![Daily Treasury](./static/images/github/daily_treasury.PNG)
 
 #### /inflation/
-- Monthly inflation rate (with heat map) from 2001
+- Monthly inflation rate (with heat map) from 1960
 - Data is from <a href="https://www.usinflationcalculator.com/inflation/current-inflation-rates/">usinflationcalculator.com/inflation</a>
 ![Inflation](./static/images/github/inflation.png)
 
@@ -182,12 +204,16 @@ This website is free for everyone. But if you want to support me, please give me
 - Percentage upside when buying XLNX
 ![AMD-XLNX Ratio](./static/images/github/amd_xlnx_ratio.PNG)
 
+#### /news/
+- View breaking, crypto, forex and merger news
+![Latest News](./static/images/github/news.png)
+
 ### For developers:
 
 #### Setting up and installing dependencies
 ```
 # Clone the project
-git clone https://github.com/spartan737/Stocksera.git
+git clone https://github.com/guanquann/Stocksera.git
 
 # Create environment
 py -m venv venv
@@ -199,9 +225,6 @@ cd .. / ..
 
 # Install modules
 pip install -r requirements.txt
-
-# Set up static file (if debug is set to False in settings.py)
-py manage.py collectstatic
 ```
 
 Download nltk data for sentiment analysis. Type the following in console:
@@ -215,7 +238,7 @@ Download nltk data for sentiment analysis. Type the following in console:
 - Get trending tickers in Reddit, subreddit subscribers statistics, stocks with low float and high short interest.
 
 #### Run scheduled tasks
-- Please refer to [Scheduled Tasks Guide](https://github.com/spartan737/Stocksera/tree/master/scheduled_tasks) for more information on how to run scheduled tasks.
+- Please refer to [Scheduled Tasks Guide](https://github.com/guanquann/Stocksera/tree/master/scheduled_tasks) for more information on how to run scheduled tasks.
 
 #### Running the application
 You can run run_app.bat.
@@ -230,4 +253,4 @@ py manange.py runserver
 You can view the application in 127.0.0.1:8000.
 
 ### License:
-This project is under the <a href="https://github.com/spartan737/stocksera/blob/master/LICENSE">MIT</a> license.
+This project is under the <a href="https://github.com/guanquann/stocksera/blob/master/LICENSE">MIT</a> license.

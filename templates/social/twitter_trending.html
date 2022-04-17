@@ -2,7 +2,7 @@
 {% load static %}
 {% load filter %}
 
-{% block title %}StocksEra | Twitter{% endblock %}
+{% block title %}Stocksera | Twitter{% endblock %}
 
 {% block additional_script %}
 <link rel="stylesheet" href="{% static 'style/social/stocktwits.css' %}">
@@ -12,25 +12,21 @@
 
 {% block main_nav %}
     <a href="/">Stocksera</a> /
+    <a href="/discover">Discover</a> /
     <a href="/twitter_trending">Twitter Trending</a>
 {% endblock %}
 
 {% block main_content %}
     <script>highlight_selected_nav('social')</script>
 
-    <div class="instructions">
-        <h2>Twitter Trending</h2>
-            <p>Discover the ranking of popular tickers in Stocktwits over time.
-                Due to limitations in Stocktwits API, only the top 30 trending tickers is available.
-            </p>
+    <div class="more_info_div_parent">
+        <div class="more_info_div"><a href="{% url 'stocktwits' %}">Stocktwits</a></div>
+        <div class="more_info_div current_link"><a href="{% url 'twitter_trending' %}">Twitter</a></div>
     </div>
 
     <div class="instructions">
-        <h2>Other Datasets Available</h2>
-        <div class="more_info_div_parent">
-            <div class="more_info_div"><a class="more_info_btn" href="{% url 'stocktwits' %}">Stocktwits</a></div>
-            <div class="more_info_div"><a class="more_info_btn current_link" href="{% url 'twitter_trending' %}">Twitter</a></div>
-        </div>
+        <h2>Twitter Trending</h2>
+            <p>Discover the number of mentions of popular tickers in Twitter.</p>
     </div>
 
     <div class="contents_div">

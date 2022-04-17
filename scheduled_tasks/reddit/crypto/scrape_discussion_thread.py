@@ -23,7 +23,7 @@ def extract_ticker(text, tickers_dict, sentiment_dict, sentiment_score):
     sentiment_score: float
         sentiment of comment
     """
-    print(text)
+    # print(text)
     extracted_tickers_set = set()
     for word in text.upper().split():
         for key, value in crypto_dict.items():
@@ -33,13 +33,13 @@ def extract_ticker(text, tickers_dict, sentiment_dict, sentiment_score):
     for ticker in extracted_tickers_set:
         tickers_dict[ticker] = tickers_dict.get(ticker, 0) + 1
         sentiment_dict[ticker] = sentiment_dict.get(ticker, 0) + sentiment_score
-    print(extracted_tickers_set)
+    # print(extracted_tickers_set)
     return tickers_dict, sentiment_dict
 
 
 def crypto_live():
     """
-    Get real time sentiment from r/cryptocurrency discussion thread
+    Get mentions from r/cryptocurrency discussion thread in the last 10 minutes
     """
     current_datetime_str = str(current_datetime).rsplit(":", 1)[0]
 
@@ -57,7 +57,8 @@ def crypto_live():
 
     for post in subreddit.hot(limit=10):
         # Ensure that post is stickied and the post is not an image
-        if post.stickied and ".jpg" not in post.url and ".png" not in post.url:
+        if post.stickied and ".jpg" not in post.url and ".png" not in post.url and "https" in post.url and \
+                "comments" in post.url:
             print(post.url)
             submission = reddit.submission(url=post.url)
 
@@ -108,7 +109,7 @@ def crypto_live():
     df = df[(df["mentions"] >= 3) & (df["word"].str.len() > 1)]
 
     df["date_updated"] = current_datetime_str
-    df.to_sql("crypto_word_cloud", conn, if_exists="append", index=False)
+    df.to_sql("crypto_word_cloud", engine, if_exists="append", index=False)
 
     # Combine into 1 df
     trending_df = pd.DataFrame()
@@ -120,7 +121,47 @@ def crypto_live():
     trending_df["date_updated"] = current_datetime_str
     trending_df.sort_values(by=["mentions"], ascending=False, inplace=True)
     print(trending_df)
-    trending_df.to_sql("crypto_trending_24H", conn, if_exists="append", index=False)
+    trending_df.to_sql("crypto_trending_24H", engine, if_exists="append", index=False)
+
+
+def crypto_live_stream():
+    """
+    Get mentions from r/cryptocurrency discussion thread realtime. Data is streamed continuously.
+    """
+    while True:
+        count = 0
+        sentiment_dict = {}
+        tickers_dict = {}
+        while count <= 20:
+            try:
+                subreddit = reddit.subreddit("cryptocurrency")
+                for comment in subreddit.stream.comments(skip_existing=True):
+                    current_datetime_str = str(datetime.utcnow()).rsplit(":", 1)[0]
+                    body = str(comment.body)
+
+                    vs = analyzer.polarity_scores(body)
+                    sentiment = vs['compound']
+                    tickers_dict, sentiment_dict = extract_ticker(body.upper(), tickers_dict, sentiment_dict, sentiment)
+                    count += 1
+
+                    if count > 20:
+                        trending_df = pd.DataFrame()
+                        trending_df["ticker"] = tickers_dict.keys()
+                        trending_df["mentions"] = tickers_dict.values()
+                        trending_df["sentiment"] = sentiment_dict.values()
+                        trending_df["sentiment"] = trending_df["sentiment"] / trending_df["mentions"]
+                        trending_df["sentiment"] = trending_df["sentiment"].round(2)
+                        trending_df["date_updated"] = current_datetime_str
+                        trending_df.sort_values(by=["mentions"], ascending=False, inplace=True)
+                        print(trending_df)
+                        trending_df.to_sql("crypto_trending_24H", engine, if_exists="append", index=False)
+                        count = 0
+                        sentiment_dict = {}
+                        tickers_dict = {}
+
+            except Exception as e:
+                print(e)
+                time.sleep(10)
 
 
 def update_hourly():
@@ -131,12 +172,12 @@ def update_hourly():
     threshold_hour = threshold_datetime.rsplit(":", 2)[0] + ":00"
     print(threshold_hour, "onwards being saved to hourly database")
 
-    db.execute("SELECT ticker, SUM(mentions), AVG(sentiment) FROM crypto_trending_24H WHERE "
-               "date_updated > ? GROUP BY ticker", (threshold_datetime, ))
-    x = db.fetchall()
+    cur.execute("SELECT ticker, SUM(mentions), AVG(sentiment) FROM crypto_trending_24H WHERE "
+                "date_updated > %s GROUP BY ticker", (threshold_datetime, ))
+    x = cur.fetchall()
     for row in x:
-        db.execute("INSERT INTO crypto_trending_hourly VALUES (?, ?, ?, ?)", (row + (threshold_hour, )))
-        conn.commit()
+        cur.execute("INSERT INTO crypto_trending_hourly VALUES (%s, %s, %s, %s)", (row + (threshold_hour, )))
+        cnx.commit()
 
 
 def crypto_change():
@@ -149,17 +190,17 @@ def crypto_change():
     threshold_datetime2 = str(current_datetime - timedelta(hours=48))
     threshold_hour2 = threshold_datetime2.rsplit(":", 2)[0] + ":00"
 
-    db.execute("SELECT ticker AS Ticker, SUM(mentions) AS Mentions, AVG(sentiment) AS Sentiment "
-               "FROM crypto_trending_24H WHERE date_updated >= '{}' GROUP BY ticker ORDER BY SUM(mentions) "
-               "DESC LIMIT 50".format(threshold_hour))
-    current = db.fetchall()
-    db.execute("DELETE FROM crypto_change")
+    cur.execute("SELECT ticker AS Ticker, SUM(mentions) AS Mentions, AVG(sentiment) AS Sentiment "
+                "FROM crypto_trending_24H WHERE date_updated >= %s GROUP BY ticker ORDER BY SUM(mentions) "
+                "DESC LIMIT 50", (threshold_hour, ))
+    current = cur.fetchall()
+    cur.execute("DELETE FROM crypto_change")
     for row in current:
         ticker = row[0]
         current_mentions = row[1]
-        db.execute("SELECT SUM(mentions) FROM crypto_trending_hourly WHERE date_updated < ? AND date_updated >= ? "
-                   "AND ticker=?", (threshold_hour, threshold_hour2, ticker))
-        previous_mentions = db.fetchone()[0]
+        cur.execute("SELECT SUM(mentions) FROM crypto_trending_hourly WHERE date_updated < %s AND date_updated >= %s "
+                    "AND ticker=%s", (threshold_hour, threshold_hour2, ticker))
+        previous_mentions = cur.fetchone()[0]
 
         if previous_mentions is not None:
             percent_change = round((current_mentions - previous_mentions) / previous_mentions, 2) * 100
@@ -168,12 +209,13 @@ def crypto_change():
         else:
             percent_change = 1000
 
-        db.execute("INSERT INTO crypto_change VALUES (?, ?, ?)", (ticker, current_mentions, percent_change))
-        conn.commit()
+        cur.execute("INSERT INTO crypto_change VALUES (%s, %s, %s)", (ticker, current_mentions, percent_change))
+        cnx.commit()
 
 
 if __name__ == '__main__':
-    crypto_live()
-    # update_hourly()
-    # crypto_change()
+    # crypto_live()
+    crypto_live_stream()
+    update_hourly()
+    crypto_change()
 

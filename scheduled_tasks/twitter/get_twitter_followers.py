@@ -1,13 +1,14 @@
 import os
 import sys
-import sqlite3
+import time
 from datetime import datetime
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
 from scheduled_tasks.twitter.twitter_connection import *
+from helpers import connect_mysql_database
 
-conn = sqlite3.connect(r"database/database.db", check_same_thread=False)
-db = conn.cursor()
+cnx, engine = connect_mysql_database()
+cur = cnx.cursor()
 
 # key of the dict is the symbol of the ticker, while the value is the username of the Twitter account
 interested_accounts = {
@@ -154,6 +155,12 @@ interested_accounts = {
     "BARK": "barkbox",
     "EBAY": "eBay",
     "LYFT": "lyft",
+    "MARA": "MarathonDigitalHoldings",
+    "TSM": "TaiwanSemiconductor",
+    "LODE": "ComstockMining",
+    "USAS": "AmericasGoldandSilverCorporation",
+    "CLSK": "CleanSpark",
+    "CYDY": "CytoDyn",
 }
 date_updated = str(datetime.now()).split()[0]
 
@@ -163,9 +170,10 @@ def main():
         url = "https://api.twitter.com/1.1/users/show.json?screen_name={}".format(account)
         json_response = connect_to_endpoint(url)
         print("Twitter account of: ", symbol, json_response["followers_count"])
-        db.execute("INSERT OR IGNORE INTO twitter_followers VALUES (?, ?, ?)",
-                   (symbol, json_response["followers_count"], date_updated))
-        conn.commit()
+        cur.execute("INSERT IGNORE INTO twitter_followers VALUES (%s, %s, %s)",
+                    (symbol, json_response["followers_count"], date_updated))
+        cnx.commit()
+        time.sleep(1)
 
 
 if __name__ == "__main__":

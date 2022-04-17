@@ -1,0 +1,45 @@
+.explore_news {
+    background-color: rgb(38, 166, 154);
+    color: white !important;
+    padding: 4px;
+    border-radius: 5px;
+    margin: 2px 7px 2px 0;
+}
+
+.general {
+    color: white;
+    background: blue;
+}
+
+.crypto {
+    color: black;
+    background: yellow;
+}
+
+.forex {
+    color: white;
+    background: brown;
+}
+
+.merger {
+    color: white;
+    background: red;
+}
+
+.news_source {
+    color: black;
+    background: wheat;
+}
+
+.section {
+    padding: 4px;
+    border-radius: 5px;
+    margin: 2px 7px 2px 0;
+}
+
+td, th {
+    max-width: 800px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

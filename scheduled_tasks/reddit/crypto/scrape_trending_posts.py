@@ -212,7 +212,8 @@ def get_graph_chart(crypto_id, symbol):
 
 
 def main():
-    current_scores, total_rocket_score, total_posts_score, total_upvotes_score, total_comments_score = get_submission_generators(24, "cryptocurrency")
+    current_scores, total_rocket_score, total_posts_score, total_upvotes_score, total_comments_score = \
+        get_submission_generators(24, "cryptocurrency")
     results_df = populate_df(current_scores)
     results_df.insert(loc=4, column='rockets', value=pd.Series(total_rocket_score))
     results_df.insert(loc=5, column='posts', value=pd.Series(total_posts_score))
@@ -238,28 +239,31 @@ def main():
         for i in coingecko_coin_list:
             if symbol.lower() == i["symbol"].lower():
                 print(index, ": ", symbol)
-                crypto_id = i['id']
-                stats_table = get_financial_data(stats_table, crypto_id, symbol)
+                try:
+                    crypto_id = i['id']
+                    stats_table = get_financial_data(stats_table, crypto_id, symbol)
 
-                # Only save graph for top 35 symbols
-                if index < 35:
-                    get_graph_chart(crypto_id, symbol)
-                break
+                    # Only save graph for top 35 symbols
+                    if index < 35:
+                        get_graph_chart(crypto_id, symbol)
+                    break
+                except KeyError:
+                    continue
 
     stats_df = pd.DataFrame(stats_table, columns=["Symbol", "Price", "24H Change", "30D Change", "Volume", "Market Cap",
                                                   "Circulating Supply", "Max Supply"])
     stats_df.set_index('Symbol', inplace=True)
     results_df = pd.concat([results_df, stats_df], axis=1)
 
-    db.execute("SELECT DISTINCT (date_updated) FROM cryptocurrency")
-    dates = db.fetchall()
+    cur.execute("SELECT DISTINCT (date_updated) FROM cryptocurrency")
+    dates = cur.fetchall()
 
     if dates:
         last_date = dates[-1][0].split()[0]
     else:
         last_date = ""
-    db.execute("SELECT * FROM cryptocurrency WHERE date_updated LIKE '%{}%'".format(last_date, ))
-    prev = db.fetchall()
+    cur.execute("SELECT * FROM cryptocurrency WHERE date_updated LIKE '%{}%'".format(last_date, ))
+    prev = cur.fetchall()
 
     for index, row in results_df.iterrows():
         symbol = index
@@ -293,12 +297,11 @@ def main():
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     results_df['date_updated'] = dt_string
 
-    for row_num in range(len(results_df)):
-        db.execute(
-            "INSERT INTO cryptocurrency VALUES "
-            "(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            tuple(results_df.loc[row_num].tolist()))
-        conn.commit()
+    cur.executemany(
+        "INSERT IGNORE INTO cryptocurrency VALUES "
+        "(NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        results_df.values.tolist())
+    cnx.commit()
 
 
 if __name__ == '__main__':

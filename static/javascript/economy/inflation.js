@@ -2,16 +2,26 @@ function color_table(is_checked, whether_drs) {
     var date_list = [], avg_inflation = [];
     var table = document.getElementsByTagName("table")[0];
     var tr = table.querySelectorAll("tr");
+    tr[0].querySelectorAll("th")[13].style.display = "none"
     if (is_checked == "checked") {
         for (i=tr.length-1; i>0; i--) {
             var td = tr[i].querySelectorAll("td");
-            for (k=1; k<td.length; k++) {
+            td[13].style.display = "none"
+            for (k=1; k<td.length-1; k++) {
                 const value = td[k].innerHTML
                 if (value != "N/A") {
-                    const l = 100 - (value * 11);
+//                    const l = 100 - (value * 11);
+//                    const textColor = l < 60 ? 'white' : '#000';
+//                    if (whether_drs == "DRS") {
+//                        td[k].style.backgroundColor = 'hsl(330, 70%, ' + l + '%)'
+//                    }
+//                    else {
+//                        td[k].style.backgroundColor = 'hsl(10, 70%, ' + l + '%)'
+//                    }
+                    const l = 95 - (value * 9);
                     const textColor = l < 60 ? 'white' : '#000';
                     if (whether_drs == "DRS") {
-                        td[k].style.backgroundColor = 'hsl(330, 70%, ' + l + '%)'
+                        td[k].style.backgroundColor = 'hsl(300, 70%, ' + l + '%)'
                     }
                     else {
                         td[k].style.backgroundColor = 'hsl(10, 70%, ' + l + '%)'
@@ -36,14 +46,17 @@ function show_reference(whether_drs) {
     var tds = document.getElementById("heatmap_reference").querySelector("tr").querySelectorAll("td")
     for (k=0; k<tds.length; k++) {
         const value = tds[k].innerHTML
-        const l = 100 - (value * 11);
+//        const l = 100 - (value * 11);
+        const l = 95 - (value * 9);
         const textColor = l < 60 ? 'white' : '#000';
         if (whether_drs == "normal") {
             tds[k].style.backgroundColor = 'hsl(10, 70%, ' + l + '%)'
         }
         else {
-            tds[k].style.backgroundColor = 'hsl(330, 70%, ' + l + '%)'
+//            tds[k].style.backgroundColor = 'hsl(330, 70%, ' + l + '%)'
+            tds[k].style.backgroundColor = 'hsl(300, 70%, ' + l + '%)'
         }
+
         tds[k].style.color = textColor
     }
 }
